@@ -139,11 +139,12 @@ The original Astro Theme Provider tried to solve this in general. It has been un
 
 ## 12. Risks and open questions
 **Risks.** Each one is closed by a spike before the spec is written.
-- **R-1 Collections re-export:** it's unverified that a Site can re-export a complete `collections` object defined in a package, in dev and build and with types. If this fails, the fallback is Starlight's pattern, where the Site wires up each collection (this would reopen ADR-0004).
+- **R-1 Collections re-export:** ~~it's unverified that a Site can re-export a complete `collections` object defined in a package, in dev and build and with types.~~ Closed 2026-11-01: it works, with conditions carried into the spec (`docs/research/spike-r1-collections-reexport.md`). ADR-0004 stands.
 - **R-2 Actions re-export:** it's unverified that re-exporting `server` from the package works, including types and the subscribe form.
 - **R-3 CMS from the package:** it's unverified that Sveltia correctly loads the injected config endpoints plus a separate backend-only file.
 - **R-4 Dev reload:** edits to the package's collections or actions files may not hot-reload in the Starter Site. This affects DX-5.
 - **R-5 Two codebases during the freeze:** urgent fixes made in `sojourners.church` must be ported to the package as they happen.
+- **R-6 Stale content cache on Theme upgrades** (found by the R-1 spike): Astro revalidates cached content only when the Site's `content.config.ts` text, the Astro config or the Astro version changes. A Theme release that changes a schema changes none of these, so a Site with a cached store (Netlify caches `node_modules/.astro`) could deploy content validated against the old schema, with no error. Mitigation, tested: the integration adds the Theme's version to `env.schema`, which changes the Astro config digest on every release. This relies on undocumented Astro internals, so the spec adds a smoke check for it.
 
 **Open questions:**
 - How often is the Site Developer also the Site Editor? Deferred to the post-MVP milestone.
@@ -175,6 +176,7 @@ The original Astro Theme Provider tried to solve this in general. It has been un
 | `sojourners.church` (Sveltia) is the source, not the `astro-church` template | Discovery |
 | Features are enabled through content; all Feature routes are always injected | ADR-0003 |
 | The Theme owns and exports complete `collections` | ADR-0004 |
+| R-1 closed; the Theme also exports each collection's schema; the version goes into `env.schema` to bust the content cache | R-1 spike (2026-11-01) |
 | The Theme serves the whole CMS; the Site provides only the backend repo | Discovery Q5 |
 | Customization: content, editor custom CSS, developer stylesheets; overrides deferred | Discovery Q6 |
 | Starter Site through `create-astro`, which doubles as the playground; `astro add` documented | Discovery Q7 |

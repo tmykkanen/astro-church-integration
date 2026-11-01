@@ -24,10 +24,10 @@ Discovery finished on 2026-10-31. The approved [PRD](prd/PRD.md), the [ADRs](adr
 
 These close PRD risks R-1 to R-3 before the spec is written. They don't depend on each other, and each should take about one session. Keep spike code out of `main` (for example on `spike/<name>` branches) and record each result in `docs/research/`.
 
-- **R-1, collections re-export:** a package exports a `collections` object built with `defineCollection` and `glob`, and the playground re-exports it. Check `astro dev`, `astro build` and `astro sync` types. If this fails, ADR-0004 has to be reopened.
+- [x] **R-1, collections re-export (2026-11-01):** passes; ADR-0004 stands. Results, the new risk R-6 (stale content cache) and the six items carried into the spec are in `docs/research/spike-r1-collections-reexport.md`. Code is on `spike/collections-reexport`.
 - **R-2, actions re-export:** the playground's `src/actions/index.ts` re-exports `server` from the package. Check the types and a form submission. This needs an adapter.
 - **R-3, CMS served from the package:** inject `/cms` and `/cms/config/[file].yaml`, and add a separate backend-only config file. Check that Sveltia loads all of them.
-- **R-4, dev reload:** watch it during all three spikes. Do edits inside the package hot-reload in the playground?
+- **R-4, dev reload:** watch it during all three spikes. Do edits inside the package hot-reload in the playground? So far (R-1): package edits reach the editor but not the running dev server. Details are in the R-1 note, under finding 4.
 
 Useful references: `docs/research/integration-capabilities.md` and the July spikes in `~/Repos/@tmykkanen/astro-church-integration-spikes/`.
 
