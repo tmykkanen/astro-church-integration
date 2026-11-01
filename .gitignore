@@ -1,0 +1,6 @@
+node_modules
+.DS_Store
+
+# Claude Code: per-developer settings, and the flag that allows a production-code exception
+.claude/settings.local.json
+.claude/exception

@@ -1,0 +1,15 @@
+# Git hooks. Installed by lefthook's postinstall on `pnpm install`
+# (allowed in pnpm-workspace.yaml). Switch pre-push to `pnpm verify` once it exists.
+pre-commit:
+  commands:
+    biome:
+      glob: "*.{js,ts,mjs,cjs,json,jsonc,css,astro}"
+      run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
+      stage_fixed: true
+
+pre-push:
+  commands:
+    lint:
+      run: pnpm lint
+    build:
+      run: pnpm --filter astro-church build

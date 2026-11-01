@@ -1,0 +1,7 @@
+packages:
+  - packages/*
+  - playground
+allowBuilds:
+  esbuild: false
+  sharp: false
+  lefthook: true

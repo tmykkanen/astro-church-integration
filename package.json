@@ -1,0 +1,24 @@
+{
+	"name": "root",
+	"private": true,
+	"packageManager": "pnpm@12.8.1",
+	"engines": {
+		"node": ">=22.12.0"
+	},
+	"scripts": {
+		"package:dev": "pnpm --filter astro-church dev",
+		"playground:dev": "pnpm --filter playground dev",
+		"dev": "pnpm --stream -r -parallel dev",
+		"changeset": "changeset",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write",
+		"ci-version": "changeset version && pnpm install --no-frozen-lockfile",
+		"ci-publish": "changeset publish"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.5.15",
+		"@changesets/changelog-github": "1.0.1",
+		"@changesets/cli": "3.0.3",
+		"lefthook": "2.2.2"
+	}
+}

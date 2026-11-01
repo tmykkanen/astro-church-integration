@@ -1,0 +1,47 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": {
+					"level": "on",
+					"options": {
+						"groups": [
+							[":BUN:", ":NODE:"],
+							":BLANK_LINE:",
+							[":URL:", ":PACKAGE_WITH_PROTOCOL:", ":PACKAGE:"],
+							":BLANK_LINE:",
+							":ALIAS:",
+							":BLANK_LINE:",
+							":PATH:"
+						]
+					}
+				}
+			}
+		}
+	},
+
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"style": {
+				"noRestrictedImports": {
+					"level": "warn",
+					"options": {
+						"patterns": [
+							{
+								"group": ["../**"],
+								"message": "Relative imports are not allowed. Please use absolute paths or aliases instead."
+							}
+						]
+					}
+				}
+			}
+		}
+	},
+	"files": {
+		"includes": ["**", "!**/dist", "!**/.astro"]
+	}
+}
