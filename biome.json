@@ -25,20 +25,7 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"preset": "recommended",
-			"style": {
-				"noRestrictedImports": {
-					"level": "warn",
-					"options": {
-						"patterns": [
-							{
-								"group": ["../**"],
-								"message": "Relative imports are not allowed. Please use absolute paths or aliases instead."
-							}
-						]
-					}
-				}
-			}
+			"preset": "recommended"
 		}
 	},
 	"files": {
