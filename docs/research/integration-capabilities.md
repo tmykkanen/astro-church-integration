@@ -25,7 +25,7 @@ Astro passes a dependency through Vite when that dependency's package.json has `
 ## Injected endpoints for the CMS: yes
 - `injectRoute` accepts `.ts` endpoints from a package (a package export or a `URL`).
 - `/cms/config/[file].yaml` with `getStaticPaths` works the same way as `[slug].json.ts`.
-- **Gotcha:** an endpoint's output file has no extension added. Use an `.astro` page (or the pattern `/cms/index.html`) for the admin page.
+- **Gotcha:** an endpoint's output file has no extension added. Use an `.astro` page (or the pattern `/cms/index.html`) for the admin page. *Superseded by the R-3 spike: an `.astro` page triggers Sveltia's dev warning, so the admin page is an endpoint whose pattern switches on `command`. See `spike-r3-cms-from-package.md`, findings 2 and 4.*
 - Sveltia parses config files according to the `<link type>` attribute, not the response `Content-Type`.
 
 ## Sveltia: multiple config files

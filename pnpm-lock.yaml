@@ -209,7 +209,16 @@ importers:
       astro:
         specifier: ^7.0.0
         version: 7.3.5(@types/node@24.19.0)(jiti@2.7.0)(yaml@2.9.1)
+      bible-passage-reference-parser:
+        specifier: ^4.0.0
+        version: 4.0.0
+      bible-reference-formatter:
+        specifier: ^1.0.1
+        version: 1.0.1
     devDependencies:
+      '@types/bible-reference-formatter':
+        specifier: ^1.0.3
+        version: 1.0.3
       tsdown:
         specifier: 0.23.0
         version: 0.23.0(@volar/typescript@2.4.30(typescript@6.0.3))(typescript@6.0.3)
@@ -1194,6 +1203,9 @@ packages:
   '@tybys/wasm-util@0.10.4':
     resolution: {integrity: sha512-W3c4gRigFS0T/Ma4qIYF3GDAc5AQdHb1yL5znJT1Zv1YaD9Kitx656wBjvr19qbiosmZT8lWDM5BEMynUqX65A==}
 
+  '@types/bible-reference-formatter@1.0.3':
+    resolution: {integrity: sha512-VTDBCcvwyfz4d/1sadt/KV4j8hC8M4jyO6B4PTPBVIE+akiYVDHuVr8xdGIBZDNUGO8lew4IqHxUM252u5ATUg==}
+
   '@types/estree-jsx@1.0.5':
     resolution: {integrity: sha512-52CcUVNFyfb1A2ALocQw/Dd1BQFNmSdkuC3BkZ6iqhdMfQz7JWOFRuJFloOzjk+6WijU56m9oKXFAXc7o3Towg==}
 
@@ -1383,6 +1395,12 @@ packages:
 
   bail@2.0.2:
     resolution: {integrity: sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw==}
+
+  bible-passage-reference-parser@4.0.0:
+    resolution: {integrity: sha512-glCq4RVcvbeNMI2h+XppurZ2zyaelsI23dX1Uv+xXQ2KRjkWRpITyNHD2+qvLG8HSSWYw/71MOEa4DgsY+i1oA==}
+
+  bible-reference-formatter@1.0.1:
+    resolution: {integrity: sha512-ENsEDr1NtkCPT6ZAIJG9VPoxHnLgDAFhksfU9/p73h2wZYp3L6GxnwUdaHAGMyic32xMy5QPq5wweDY3Y5bmnA==}
 
   boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
@@ -3371,6 +3389,8 @@ snapshots:
     dependencies:
       tslib: 2.9.1
 
+  '@types/bible-reference-formatter@1.0.3': {}
+
   '@types/estree-jsx@1.0.5':
     dependencies:
       '@types/estree': 1.0.10
@@ -3616,6 +3636,10 @@ snapshots:
   axobject-query@4.1.0: {}
 
   bail@2.0.2: {}
+
+  bible-passage-reference-parser@4.0.0: {}
+
+  bible-reference-formatter@1.0.1: {}
 
   boolbase@1.0.0: {}
 

@@ -7,7 +7,7 @@ export function integration(options: {
 	return {
 		name: "astro-church",
 		hooks: {
-			"astro:config:setup": ({ updateConfig, injectRoute }) => {
+			"astro:config:setup": ({ updateConfig, injectRoute, command }) => {
 				updateConfig({
 					env: {
 						schema: {
@@ -20,13 +20,18 @@ export function integration(options: {
 					},
 				});
 				injectRoute({
-					pattern: "/cms/index.html",
+					pattern: command === "dev" ? "/cms" : "/cms/index.html",
 					entrypoint: new URL("./cms/admin.js", import.meta.url),
 					prerender: true,
 				});
 				injectRoute({
 					pattern: "/cms/config/[file].yaml",
 					entrypoint: new URL("./cms/config.js", import.meta.url),
+					prerender: true,
+				});
+				injectRoute({
+					pattern: "/cms/scripts/scriptureField.js",
+					entrypoint: new URL("./cms/scripts.js", import.meta.url),
 					prerender: true,
 				});
 			},

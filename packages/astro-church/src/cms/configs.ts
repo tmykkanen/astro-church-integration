@@ -31,6 +31,10 @@ singletons:
         widget: datetime
         format: "YYYY-MM-DD"
         type: date
+      - name: scripture
+        label: scripture
+        widget: scripture
+        required: false
 `,
 } as const;
 

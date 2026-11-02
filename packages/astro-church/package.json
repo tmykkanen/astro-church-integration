@@ -37,6 +37,11 @@
 		"astro": "^7.0.0"
 	},
 	"devDependencies": {
+		"@types/bible-reference-formatter": "^1.0.3",
 		"tsdown": "0.23.0"
+	},
+	"dependencies": {
+		"bible-passage-reference-parser": "^4.0.0",
+		"bible-reference-formatter": "^1.0.1"
 	}
 }
