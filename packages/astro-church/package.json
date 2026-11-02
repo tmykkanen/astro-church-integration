@@ -14,7 +14,7 @@
 		"dist"
 	],
 	"scripts": {
-		"dev": "tsdown --watch",
+		"dev": "tsdown --watch --no-clean",
 		"build": "tsdown",
 		"prepublishOnly": "pnpm build"
 	},

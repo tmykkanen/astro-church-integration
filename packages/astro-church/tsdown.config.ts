@@ -3,7 +3,7 @@ import { defineConfig } from "tsdown";
 import pkg from "./package.json" with { type: "json" };
 
 export default defineConfig({
-	entry: ["src/**/*.(ts|js)"],
+	entry: ["src/**/*.(ts|js)", "!src/**/*.d.ts"],
 	format: ["esm"],
 	target: "node22",
 	unbundle: true,

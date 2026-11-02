@@ -3,7 +3,9 @@
 	"compilerOptions": {
 		"module": "nodenext",
 		"moduleResolution": "Node16",
-		"jsx": "preserve"
+		"jsx": "preserve",
+		"types": ["astro/client"]
 	},
-	"exclude": ["dist"]
+	"exclude": ["dist"],
+	"include": ["src"]
 }
