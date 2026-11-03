@@ -28,7 +28,8 @@
 	"homepage": "https://github.com/tmykkanen/astro-church-integration#readme",
 	"license": "MIT",
 	"peerDependencies": {
-		"astro": "^7.3.0"
+		"astro": "^7.3.0",
+		"typescript": ">=6"
 	},
 	"devDependencies": {
 		"typescript": "6.0.3"

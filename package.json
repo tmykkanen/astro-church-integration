@@ -11,6 +11,7 @@
 		"changeset": "changeset",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write",
+		"test:packed": "node packages/astro-church/tests/packed/harness.mjs",
 		"ci-version": "changeset version && pnpm install --no-frozen-lockfile",
 		"ci-publish": "changeset publish"
 	},
