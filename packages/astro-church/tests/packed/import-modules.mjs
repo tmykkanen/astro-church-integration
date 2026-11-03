@@ -31,9 +31,14 @@ const server = await createServer({
 	server: { middlewareMode: true, hmr: false, ws: false },
 });
 
+// Code modules only: stylesheets and type declarations aren't imported on
+// their own (ticket 03's built-CSS check covers styles).
+const isCodeModule = (name) =>
+	/\.(astro|[cm]?[jt]s)$/.test(name) && !/\.d\.[cm]?ts$/.test(name);
+
 const src = join(realpathSync("node_modules/astro-church"), "src");
 const modules = readdirSync(src, { recursive: true, withFileTypes: true })
-	.filter((entry) => entry.isFile())
+	.filter((entry) => entry.isFile() && isCodeModule(entry.name))
 	.map((entry) => join(entry.parentPath, entry.name));
 
 const failures = [];
@@ -41,7 +46,7 @@ for (const file of modules) {
 	try {
 		await server.ssrLoadModule(file);
 	} catch (error) {
-		failures.push(`${relative(src, file)}: ${error.message}`);
+		failures.push(`${relative(src, file)}: ${error?.message ?? error}`);
 	}
 }
 // Astro builds its dev server app in the background when the server starts;
