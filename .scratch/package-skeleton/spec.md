@@ -77,7 +77,7 @@ The packed-install harness isn't part of `verify`; it runs in CI.
 What exists when this spec is done (Tyler names and shapes all of it):
 - The integration injects one `.astro` route. The route renders a Theme component, uses a `#/` import, applies a Tailwind class that appears only in Theme files, and includes a client `<script>`.
 - The Starter Site has one content file using a Tailwind class that appears nowhere else.
-- `astro-church/content` exports an empty `collections`, and `astro-church/actions` exports an empty `server` plus its `satisfies` type. The Starter Site re-exports both in one line each (DX-1).
+- `astro-church/content` exports an empty `collections`, and `astro-church/actions` exports an empty `server` plus its `satisfies` type. The Starter Site re-exports `collections` in one line, and exports `server` as `{ ...server } satisfies ThemeActions` after one import (DX-1). A plain `typeof server` would reject a Site's own actions under `satisfies`, so `ThemeActions` is open (ticket 04).
 - `client/` holds the scripture field's validator entry, bundled to `dist/client/`.
 
 ## Test seams (approved 2026-11-03)

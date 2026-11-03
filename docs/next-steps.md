@@ -36,20 +36,20 @@ Useful references: `docs/research/integration-capabilities.md` and the July spik
 
 One spec per area. Each area lists the items its spec must settle. `R-1 #2` means item 2 under "Carried into the spec" in that spike's note.
 
-1. **Package skeleton and publishing:** spec written 2026-11-03 (`.scratch/package-skeleton/spec.md`, ADR-0005: the package ships its source). Its carried-items table records each outcome; R-1 #1, #5 and R-2 #7 are no longer needed. Tickets 01–08 written 2026-11-03; 01–03 resolved. Unblocked next: 04, 05.
+1. **Package skeleton and publishing:** spec written 2026-11-03 (`.scratch/package-skeleton/spec.md`, ADR-0005: the package ships its source). Its carried-items table records each outcome; R-1 #1, #5 and R-2 #7 are no longer needed. Tickets 01–08 written 2026-11-03; 01–04 resolved. Unblocked next: 05.
    Original scope: `exports`, `files`, how `.astro`/CSS/client scripts ship (a tsdown copy step or raw source), Tailwind `@source`, and the `#/` alias moving to package.json `imports`.
    - Carried: R-1 #1, #5, #6; R-2 #5, #7, #8; R-3 #2, #4, #5, #9. Also: the packed package (R-3 leftover), the dev loop and `pnpm dev`'s watcher (R-4), and `pnpm verify`.
 2. **Integration core:** the options schema (`cms.repo`, `customCss`), route injection, bundled integrations (`astro-icon`, sitemap, Tailwind), `env.schema` and fonts, and env checks for enabled Features (replacing `verifyRequiredEnvVars`).
    - Carried: R-2 #4 (now under 3.1's rule of no ambient globals in shipped `src/`), #6; R-3 #7. Also: a missing secret at build time (R-2 leftover), and which stylesheet owns `@import "tailwindcss"` so a page never loads Tailwind's base styles twice (NFR-3; from 3.1 ticket 03).
 3. **Content contract:** collections and schemas move into the package, and the public-contract rules (PRD §9) are written down.
-   - Carried: R-1 #2, #3, #4; R-2 #2. Also: the type probe's check that collection entry `data` isn't `any` (from 3.1's harness).
+   - Carried: R-1 #2, #3, #4; R-2 #2. Also: the type probe's check that collection entry `data` isn't `any` (from 3.1's harness), and a real type for `collections` instead of 3.1's `{}` (3.1 ticket 04).
 4. **Feature migration**, one Feature at a time: sermons, blog, calendar, team, pages, homepage and layout, subscribe and giving.
-   - Carried: R-2 #1, #3. Also: the real subscribe action (R-2 leftover).
+   - Carried: R-2 #1, #3. Also: the real subscribe action (R-2 leftover). From 3.1 ticket 04: the probe that a `server` missing a Theme action fails `satisfies ThemeActions`; `serverWithSiteAction` starts to bite once `server` has an action; closing `ThemeActions` or narrowing its `unknown` index signature is breaking.
 5. **CMS serving:** the admin page, the config endpoints, the scripture widget, and the validator built by the package.
    - Carried: R-3 #1, #3, #6, #8.
 6. **Customization:** the editor's `customCss` (recommended: inline it from `config:theme`) and the developer stylesheet option.
 7. **Starter Site and CI:** generic sample content, the Netlify setup, the packed-tarball build and the smoke checks (PRD §8a).
-   - Carried: R-3 #10. Also: a Netlify build (R-2 and R-3 leftovers).
+   - Carried: R-3 #10. Also: a Netlify build (R-2 and R-3 leftovers), replacing the Starter Site's interim `@astrojs/node` adapter, and whether sessions (which `@astrojs/node` turns on with filesystem storage) stay on (3.1 ticket 04).
 8. **Sojourners cutover plan:** a branch with a deploy preview, the URL-parity check, and the local content snapshot.
 
 ## 4. Tickets

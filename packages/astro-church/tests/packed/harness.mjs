@@ -1,6 +1,7 @@
 // Packed-install harness (ticket 02, spec 3.1): packs the package, installs
 // the tarball into a copy of the Starter Site outside the workspace, runs
-// `astro check` and `astro build`, then the smoke checks: the route renders,
+// `astro check` (including the type probe in `fixtures/`, ticket 04) and
+// `astro build`, then the smoke checks: the route renders,
 // its page loads the Theme-only and Site-content Tailwind classes and the
 // route's client script (ticket 03), and every shipped module imports.
 //
@@ -118,6 +119,13 @@ cpSync(starter, site, {
 	},
 });
 
+// Add the type probe (ticket 04), so step 5's `astro check` fails if a
+// re-exported entry point's type is `any`.
+cpSync(
+	join(testsDir, "fixtures/type-probe.ts"),
+	join(site, "src/type-probe.ts"),
+);
+
 // 3. Point the Site at the tarball instead of `workspace:*`, and pin the
 // workspace's pnpm, which doesn't apply outside the workspace.
 const manifestPath = join(site, "package.json");
@@ -154,7 +162,9 @@ run("pnpm", ["exec", "astro", "build"], site);
 
 // --- Smoke checks --------------------------------------------------------
 
-const page = join(site, "dist", `.${ROUTE}/index.html`);
+// With an adapter, prerendered pages and assets go to dist/client/.
+const client = join(site, "dist", "client");
+const page = join(client, `.${ROUTE}/index.html`);
 if (!existsSync(page)) {
 	fail(`no page for ${ROUTE} in the packed Site's build (expected ${page})`);
 }
@@ -168,7 +178,7 @@ const pageHtml = readFileSync(page, "utf8");
 // A file the route's page references by URL, read from the build. `tag` is
 // the referencing tag, for the failure message.
 function readBuilt(url, tag) {
-	const file = url && join(site, "dist", url);
+	const file = url && join(client, url);
 	if (!file || !existsSync(file)) {
 		fail(`the ${ROUTE} page references a file that isn't built: ${tag}`);
 	}
