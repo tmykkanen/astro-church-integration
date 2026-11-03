@@ -75,7 +75,7 @@ The original Astro Theme Provider tried to solve this in general. It has been un
 - **FR-22** The Starter Site is the Theme Author's development playground.
 
 ## 7. Non-functional requirements
-- **NFR-1 Compatibility:** peer `astro ^7.0.0` (exact minimum set in the spec); Node `>=22.12`.
+- **NFR-1 Compatibility:** peer `astro ^7.3.0`; Node `>=22.12`.
 - **NFR-2 Hosting:** the Theme works with any adapter that supports on-demand rendering, but requires one. It never sets the adapter itself. Netlify is the only tested host.
 - **NFR-3 Performance:** a converted Site ships no more client JS or CSS per page than `sojourners.church` does today.
 - **NFR-4 Dependencies:** no runtime dependency on a theme framework or on `astro-integration-kit`. The integration is written against Astro's own API.
@@ -180,6 +180,7 @@ The original Astro Theme Provider tried to solve this in general. It has been un
 | R-2 closed; Theme actions are public contract, Sites `satisfies` an exported type | R-2 spike (2026-11-02) |
 | R-3 closed; CMS admin page is an endpoint, field script bundled separately | R-3 spike (2026-11-02) |
 | R-4 closed with accepted limits; the dev loop moves into the package-skeleton spec | Next-steps grilling (2026-11-03) |
+| The package ships its source; peer `astro ^7.3.0` | ADR-0005, spec 3.1 grilling (2026-11-03) |
 | The Theme serves the whole CMS; the Site provides only the backend repo | Discovery Q5 |
 | Customization: content, editor custom CSS, developer stylesheets; overrides deferred | Discovery Q6 |
 | Starter Site through `create-astro`, which doubles as the playground; `astro add` documented | Discovery Q7 |
