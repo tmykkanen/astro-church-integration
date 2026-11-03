@@ -82,7 +82,7 @@ The original Astro Theme Provider tried to solve this in general. It has been un
 - **NFR-5 Quality:** see §8a.
 
 ## 8. Developer experience requirements
-- **DX-1** All the code a Site needs for the Theme is the integration call in `astro.config` plus two one-line re-export files.
+- **DX-1** All the code a Site needs for the Theme is the integration call in `astro.config` plus two short re-export files: one line re-exporting `collections`, and one export of the Theme's `server` checked with `satisfies ThemeActions`.
 - **DX-2** Integration options are validated when dev or build starts. An invalid option fails with a message naming the option and the expected value.
 - **DX-3** Integration options and the re-exported modules are fully typed in the Site. `astro sync` and `astro check` pass on the Starter Site.
 - **DX-4** The README documents installation, the two re-export files, integration options, env vars, the public contract (§9) and upgrade notes. It is the MVP's documentation.
@@ -100,6 +100,7 @@ The original Astro Theme Provider tried to solve this in general. It has been un
 - **Public contract:**
   - integration options
   - entry points (`astro-church`, `astro-church/content`, `astro-church/actions`)
+  - the `ThemeActions` type, and the Theme's action names and result shapes it carries (a Site's `server` satisfies it; Sites may add actions, but may not remove the Theme's or change their result shapes; R-2)
   - collection names, content paths, schemas, and navigation and Feature types
   - env var names
   - URLs: default slugs and the shape of entry URLs

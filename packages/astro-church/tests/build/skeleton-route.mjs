@@ -15,7 +15,9 @@ const MARKER = 'data-astro-church="skeleton-component"';
 
 const site = new URL("../../../../playground/", import.meta.url);
 const dist = new URL("dist/", site);
-const page = fileURLToPath(new URL(`.${ROUTE}/index.html`, dist));
+// With an adapter, prerendered pages and assets go to dist/client/.
+const client = new URL("client/", dist);
+const page = fileURLToPath(new URL(`.${ROUTE}/index.html`, client));
 
 function fail(message) {
 	console.error(`FAIL: ${message}`);

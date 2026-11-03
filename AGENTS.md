@@ -25,7 +25,7 @@ Astro Church is a church-website Theme, being converted from code copied into ea
 
 - Written against Astro's own integration API; no theme framework, no `astro-integration-kit` (ADR-0002, NFR-4).
 - Features are enabled through content; every Feature route is always injected (ADR-0003).
-- The Theme owns and exports complete `collections` and the Actions `server`; a Site re-exports each in one line (ADR-0004).
+- The Theme owns and exports complete `collections` and the Actions `server`; a Site re-exports each in a short file (ADR-0004, DX-1).
 - Anything in the public contract (PRD §9) is a breaking change if it changes. Flag it.
 - Strict parity with `sojourners.church`; no new Features in the MVP (PRD §10).
 

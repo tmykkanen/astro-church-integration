@@ -4,7 +4,9 @@
 	"description": "Theme integration for astro church",
 	"type": "module",
 	"exports": {
-		".": "./src/index.ts"
+		".": "./src/index.ts",
+		"./content": "./src/content.ts",
+		"./actions": "./src/actions.ts"
 	},
 	"imports": {
 		"#/*": "./src/*"
