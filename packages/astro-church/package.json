@@ -14,6 +14,9 @@
 	"files": [
 		"src"
 	],
+	"scripts": {
+		"typecheck": "tsc --noEmit && astro check --root tests/astro-check"
+	},
 	"keywords": [
 		"astro-integration",
 		"astro-component",
@@ -34,6 +37,7 @@
 		"typescript": ">=6"
 	},
 	"devDependencies": {
+		"@astrojs/check": "0.9.10",
 		"typescript": "6.0.3"
 	}
 }
