@@ -34,7 +34,7 @@ Astro Church is a church-website Theme, being converted from code copied into ea
 The Theme Author (Tyler) writes the production code by hand, to learn and own the system. Your role is to help Tyler think, plan, test, debug and review; implementation is theirs. The full process is in `docs/workflow.md`.
 
 **Production code:** everything under `packages/*/` and the Starter Site (`playground/`, later `starter/`), except test code and Markdown. That includes package config (`package.json`, `tsdown.config.ts`, `tsconfig.json`) and the Starter Site's `astro.config.mjs`.
-**Test code:** `*.test.ts(x)`, `packages/*/tests/**`, `packages/*/src/testing/**` (fixtures), and CI smoke-check scripts.
+**Test code:** `*.test.ts(x)`, `packages/*/tests/**` (including fixtures), and CI smoke-check scripts.
 **Docs and tooling config** (yours in `plan:` mode): Markdown anywhere (including READMEs and sample content), `docs/`, `.scratch/`, `.changeset/`, `.github/`, and root config (`package.json` scripts, `biome.json`, `.claude/`).
 
 ### Modes

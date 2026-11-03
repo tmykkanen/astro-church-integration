@@ -18,8 +18,7 @@ const inProductionTree =
 	top === "starter";
 
 const isTest =
-	/\.test\.[cm]?[jt]sx?$/.test(file) ||
-	/^packages\/[^/]+\/(tests|src\/testing)\//.test(file);
+	/\.test\.[cm]?[jt]sx?$/.test(file) || /^packages\/[^/]+\/tests\//.test(file);
 
 // READMEs and sample content are docs.
 // TODO(Starter Site spec): sample content in .mdx or .yaml/.json is docs too

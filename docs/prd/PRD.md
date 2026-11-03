@@ -75,7 +75,7 @@ The original Astro Theme Provider tried to solve this in general. It has been un
 - **FR-22** The Starter Site is the Theme Author's development playground.
 
 ## 7. Non-functional requirements
-- **NFR-1 Compatibility:** peer `astro ^7.3.0`; Node `>=22.12`.
+- **NFR-1 Compatibility:** peer `astro ^7.3.0`; Node `>=22.12`; peer `typescript >=6` (required). The Theme ships `.ts` source with `#/` imports (ADR-0005). TypeScript 5.x can't resolve them, and `astro check` doesn't report it: the Theme's types silently become `any` (ticket 3.1-02).
 - **NFR-2 Hosting:** the Theme works with any adapter that supports on-demand rendering, but requires one. It never sets the adapter itself. Netlify is the only tested host.
 - **NFR-3 Performance:** a converted Site ships no more client JS or CSS per page than `sojourners.church` does today.
 - **NFR-4 Dependencies:** no runtime dependency on a theme framework or on `astro-integration-kit`. The integration is written against Astro's own API.
