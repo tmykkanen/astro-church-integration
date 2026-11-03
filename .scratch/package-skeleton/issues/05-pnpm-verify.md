@@ -26,7 +26,7 @@ Manual checks: none.
 
 ## Done when
 - [ ] Each acceptance criterion traced to a test, a build or smoke check, or a manual check
-- [ ] `pnpm verify` green (before ticket 05: `pnpm lint` and the package build); the Starter Site builds if routes, collections or config changed
+- [ ] `pnpm verify` green (before ticket 05: `pnpm lint` and the Starter Site build); the Starter Site builds if routes, collections or config changed
 - [ ] Reviewed; findings resolved or logged here
 - [ ] Changeset added if the change is user-visible
 - [ ] PRD, ADR, GLOSSARY or README updated if anything changed

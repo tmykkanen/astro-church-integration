@@ -21,5 +21,8 @@ jobs:
           node-version: 24.10.0
           cache: pnpm
       - run: pnpm install
-      - run: pnpm --filter astro-church build
       - run: pnpm lint
+      # Until `pnpm verify` (ticket 05): the Starter Site's type check, then the
+      # build test, which builds the Starter Site and checks the Theme's route.
+      - run: pnpm --filter playground exec astro check
+      - run: node packages/astro-church/tests/build/skeleton-route.mjs

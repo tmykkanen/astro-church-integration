@@ -26,7 +26,7 @@ Manual checks: bundle size is in line with R-3's 265 kB.
 
 ## Done when
 - [ ] Each acceptance criterion traced to a test, a build or smoke check, or a manual check
-- [ ] `pnpm verify` green (before ticket 05: `pnpm lint` and the package build); the Starter Site builds if routes, collections or config changed
+- [ ] `pnpm verify` green (before ticket 05: `pnpm lint` and the Starter Site build); the Starter Site builds if routes, collections or config changed
 - [ ] Reviewed; findings resolved or logged here
 - [ ] Changeset added if the change is user-visible
 - [ ] PRD, ADR, GLOSSARY or README updated if anything changed
@@ -34,6 +34,8 @@ Manual checks: bundle size is in line with R-3's 265 kB.
 ## Learning goal (optional)
 
 ## Comments
+
+**2026-11-03, from ticket 01:** this ticket brings back the package build that ticket 01 removed: the `build` and `prepublishOnly` scripts, and `tsdown.config.ts`. Open question for Tyler: `prepublishOnly` runs on `publish` but not on `pnpm pack`, which ticket 02's harness uses, so the harness has to build first. `prepack` runs on both. Decide which hook to use before ticking the `prepublishOnly` criterion.
 
 ## Retro
 Learned: · Surprised by: · Next time:

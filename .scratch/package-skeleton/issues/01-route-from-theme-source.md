@@ -27,7 +27,7 @@ Manual checks: the route in `astro dev`; edit the Theme component and note wheth
 
 ## Done when
 - [ ] Each acceptance criterion traced to a test, a build or smoke check, or a manual check
-- [ ] `pnpm verify` green (before ticket 05: `pnpm lint` and the package build); the Starter Site builds if routes, collections or config changed
+- [ ] `pnpm verify` green (before ticket 05: `pnpm lint` and the Starter Site build); the Starter Site builds if routes, collections or config changed
 - [ ] Reviewed; findings resolved or logged here
 - [ ] Changeset added if the change is user-visible
 - [ ] PRD, ADR, GLOSSARY or README updated if anything changed
@@ -49,6 +49,20 @@ Manual checks: the route in `astro dev`; edit the Theme component and note wheth
 - **Decision (Tyler):** explicit extensions, the ticket's fallback. With the single map and exact paths, `tsc`, `astro build` and the Site's `astro check` passed, and the package imported in bare Node from the workspace.
 - **Ported tests:** they import through extensionless or folder `#/` paths (for example `'#/lib/scriptureParsing/'`). Tyler approved one blanket change: add the exact file to those paths, and leave assertions unchanged.
 - **Recorded in:** the spec's **Internal alias** decision.
+
+**2026-11-03: build test delegated.** The workflow has Tyler write the first test of each new kind. For this first build test, Tyler delegated it to the agent and approved the draft. The test is `packages/astro-church/tests/build/skeleton-route.mjs`, and its literals are the route `/theme-skeleton` and the marker `data-astro-church="skeleton-component"` in the Theme component. It's a plain Node script that cleans and builds the Starter Site, so ticket 02's harness can reuse it. Red confirmed: the build succeeds, and the test fails on the missing page.
+
+**2026-11-03: package build removed until ticket 07.**
+- **Why:** with the Node build gone, tsdown has no entries until the CMS bundle arrives. Checked in a scratch directory: tsdown 0.23.0 exits 1 with `Cannot find entry`.
+- **Decision (Tyler):** remove the build rather than add a placeholder entry or a no-op script.
+- **Tooling (agent):**
+  - pre-push runs `pnpm lint` and `pnpm --filter playground build`
+  - CI runs `pnpm lint`, the Starter Site's `astro check` and the build test
+  - root `pnpm dev` runs only the Starter Site
+  - `package:dev` is gone
+  - the Done-when line in tickets 01–08, `docs/workflow.md` and the spec now say "the Starter Site build".
+- **Production (Tyler):** remove the package's `build`, `dev` and `prepublishOnly` scripts and `tsdown.config.ts`.
+- **Comes back in:** ticket 07 (the bundle build). Ticket 05 switches pre-push and CI to `pnpm verify`.
 
 ## Retro
 Learned: · Surprised by: · Next time:
