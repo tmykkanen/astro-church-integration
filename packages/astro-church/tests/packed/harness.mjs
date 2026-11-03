@@ -1,6 +1,8 @@
 // Packed-install harness (ticket 02, spec 3.1): packs the package, installs
 // the tarball into a copy of the Starter Site outside the workspace, runs
-// `astro check` and `astro build`, then the smoke checks.
+// `astro check` and `astro build`, then the smoke checks: the route renders,
+// its page loads the Theme-only and Site-content Tailwind classes and the
+// route's client script (ticket 03), and every shipped module imports.
 //
 // Run from anywhere: node packages/astro-church/tests/packed/harness.mjs
 // Exits 0 when every check passes, 1 on the first failure. On failure the
@@ -24,6 +26,18 @@ import { fileURLToPath } from "node:url";
 // Literals the Theme must produce (same as tests/build/skeleton-route.mjs).
 const ROUTE = "/theme-skeleton";
 const MARKER = 'data-astro-church="skeleton-component"';
+
+// Tailwind classes that appear in exactly one place each (ticket 03): the
+// Theme-only class in Theme files under `src/`, nowhere in the Starter Site.
+const THEME_CLASS = "decoration-wavy";
+// The content-only class appears in one Starter Site content file, nowhere in
+// the Theme. It must reach the Theme route's CSS, not just the Site's own
+// stylesheet: that shows the Theme's Tailwind detects Site content (FR-6).
+const CONTENT_CLASS = "decoration-dotted";
+// A string literal in the route's client <script>. Minifiers keep string
+// literals the script uses, so finding it in the JS the page loads shows the
+// script shipped.
+const SCRIPT_MARKER = "astro-church:skeleton-script";
 
 const testsDir = fileURLToPath(new URL(".", import.meta.url));
 const repo = fileURLToPath(new URL("../../../../", import.meta.url));
@@ -148,6 +162,69 @@ if (!readFileSync(page, "utf8").includes(MARKER)) {
 	fail(`the ${ROUTE} page doesn't contain the Theme component's ${MARKER}`);
 }
 console.log(`PASS: ${ROUTE} is built from the packed Theme`);
+
+const pageHtml = readFileSync(page, "utf8");
+
+// A file the route's page references by URL, read from the build. `tag` is
+// the referencing tag, for the failure message.
+function readBuilt(url, tag) {
+	const file = url && join(site, "dist", url);
+	if (!file || !existsSync(file)) {
+		fail(`the ${ROUTE} page references a file that isn't built: ${tag}`);
+	}
+	return readFileSync(file, "utf8");
+}
+
+// The CSS the route's page loads: linked stylesheets from the build, plus any
+// stylesheet Astro inlined into a <style> tag.
+const routeCss = [
+	...[...pageHtml.matchAll(/<link\b[^>]*\brel="stylesheet"[^>]*>/g)].map(
+		([tag]) => readBuilt(tag.match(/\bhref="([^"]+)"/)?.[1], tag),
+	),
+	...[...pageHtml.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map(
+		([, css]) => css,
+	),
+].join("\n");
+
+// The JS the route's page loads: scripts it links from the build, plus any
+// script Astro inlined into the page.
+const routeJs = [
+	...pageHtml.matchAll(/(<script\b([^>]*)>)([\s\S]*?)<\/script>/g),
+]
+	.map(([, tag, attrs, body]) => {
+		const src = attrs.match(/\bsrc="([^"]+)"/)?.[1];
+		return src ? readBuilt(src, tag) : body;
+	})
+	.join("\n");
+
+// A rule for the class's own selector, not a longer class it prefixes.
+function hasClassRule(css, className) {
+	const escaped = className.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	return new RegExp(`\\.${escaped}(?![\\w-])`).test(css);
+}
+
+if (!hasClassRule(routeCss, THEME_CLASS)) {
+	fail(
+		`the ${ROUTE} page's CSS has no rule for the Theme-only class .${THEME_CLASS}`,
+	);
+}
+console.log(`PASS: the ${ROUTE} page's CSS has the Theme-only .${THEME_CLASS}`);
+
+if (!hasClassRule(routeCss, CONTENT_CLASS)) {
+	fail(
+		`the ${ROUTE} page's CSS has no rule for the Site content class .${CONTENT_CLASS}`,
+	);
+}
+console.log(
+	`PASS: the ${ROUTE} page's CSS has the Site content class .${CONTENT_CLASS}`,
+);
+
+if (!routeJs.includes(SCRIPT_MARKER)) {
+	fail(
+		`the ${ROUTE} page's JS doesn't contain the route script's "${SCRIPT_MARKER}"`,
+	);
+}
+console.log(`PASS: the ${ROUTE} page ships the route's client script`);
 
 cpSync(join(testsDir, "import-modules.mjs"), join(site, "import-modules.mjs"));
 run("node", ["import-modules.mjs"], site);

@@ -36,11 +36,11 @@ Useful references: `docs/research/integration-capabilities.md` and the July spik
 
 One spec per area. Each area lists the items its spec must settle. `R-1 #2` means item 2 under "Carried into the spec" in that spike's note.
 
-1. **Package skeleton and publishing:** spec written 2026-11-03 (`.scratch/package-skeleton/spec.md`, ADR-0005: the package ships its source). Its carried-items table records each outcome; R-1 #1, #5 and R-2 #7 are no longer needed. Tickets 01–08 written 2026-11-03; 01 and 02 resolved. Unblocked next: 03, 04, 05.
+1. **Package skeleton and publishing:** spec written 2026-11-03 (`.scratch/package-skeleton/spec.md`, ADR-0005: the package ships its source). Its carried-items table records each outcome; R-1 #1, #5 and R-2 #7 are no longer needed. Tickets 01–08 written 2026-11-03; 01–03 resolved. Unblocked next: 04, 05.
    Original scope: `exports`, `files`, how `.astro`/CSS/client scripts ship (a tsdown copy step or raw source), Tailwind `@source`, and the `#/` alias moving to package.json `imports`.
    - Carried: R-1 #1, #5, #6; R-2 #5, #7, #8; R-3 #2, #4, #5, #9. Also: the packed package (R-3 leftover), the dev loop and `pnpm dev`'s watcher (R-4), and `pnpm verify`.
 2. **Integration core:** the options schema (`cms.repo`, `customCss`), route injection, bundled integrations (`astro-icon`, sitemap, Tailwind), `env.schema` and fonts, and env checks for enabled Features (replacing `verifyRequiredEnvVars`).
-   - Carried: R-2 #4 (now under 3.1's rule of no ambient globals in shipped `src/`), #6; R-3 #7. Also: a missing secret at build time (R-2 leftover).
+   - Carried: R-2 #4 (now under 3.1's rule of no ambient globals in shipped `src/`), #6; R-3 #7. Also: a missing secret at build time (R-2 leftover), and which stylesheet owns `@import "tailwindcss"` so a page never loads Tailwind's base styles twice (NFR-3; from 3.1 ticket 03).
 3. **Content contract:** collections and schemas move into the package, and the public-contract rules (PRD §9) are written down.
    - Carried: R-1 #2, #3, #4; R-2 #2. Also: the type probe's check that collection entry `data` isn't `any` (from 3.1's harness).
 4. **Feature migration**, one Feature at a time: sermons, blog, calendar, team, pages, homepage and layout, subscribe and giving.
