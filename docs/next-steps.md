@@ -27,19 +27,28 @@ These close PRD risks R-1 to R-3 before the spec is written. They don't depend o
 - [x] **R-1, collections re-export (2026-11-01):** passes; ADR-0004 stands. Results, the new risk R-6 (stale content cache) and the six items carried into the spec are in `docs/research/spike-r1-collections-reexport.md`. Code is on `spike/collections-reexport`.
 - [x] **R-2, actions re-export (2026-11-02):** passes; ADR-0004 stands. Decided: Theme actions join the public contract, and Sites check their `server` against an exported type with `satisfies`. Results, the five findings and the eight items carried into the spec are in `docs/research/spike-r2-actions-reexport.md`. Code is on `spike/actions-reexport`. Still open there: a build with `@astrojs/netlify`, a deliberate R-4 pass, a missing secret at build time, and the real subscribe action.
 - [x] **R-3, CMS served from the package (2026-11-02):** passes. The admin page is an endpoint (not an `.astro` page, which Sveltia warns against in dev), with a pattern that switches on `command`. The configs and the backend file are injected routes. The scripture field is bundled by a second tsdown config and served through a `?raw` import, with the real parser. Results, seven findings and ten items carried into the spec are in `docs/research/spike-r3-cms-from-package.md`. Code is on `spike/cms-from-package`. Still open there: a Netlify build, the published package, and R-4 through `pnpm dev`'s watcher.
-- **R-4, dev reload:** watch it during all three spikes. Do edits inside the package hot-reload in the playground? So far (R-1, R-2): package edits reach the editor but not the running dev server; package action edits need an `astro dev` restart. Details are in the R-1 note (finding 4) and the R-2 note (finding 5). R-3: a rebuilt field bundle imported with `?raw` reaches a running `astro dev` without a restart (manual rebuild only).
+- [x] **R-4, dev reload (closed 2026-11-03 with accepted limits):** package edits reach the editor but not a running `astro dev`; action edits need a restart; a rebuilt `?raw` bundle arrives without one. See the PRD risk table. The dev loop is now part of spec 3.1.
+- **Spike leftovers moved into spec areas (2026-11-03):** the packed package and the `pnpm dev` watcher go to 3.1; a missing secret at build time to 3.2; the real subscribe action to 3.4; the Netlify build to 3.7.
 
 Useful references: `docs/research/integration-capabilities.md` and the July spikes in `~/Repos/@tmykkanen/astro-church-integration-spikes/`.
 
 ## 3. Technical spec, in dependency order
 
+One spec per area. Each area lists the items its spec must settle. `R-1 #2` means item 2 under "Carried into the spec" in that spike's note.
+
 1. **Package skeleton and publishing:** `exports`, `files`, how `.astro`/CSS/client scripts ship (a tsdown copy step or raw source), Tailwind `@source`, and the `#/` alias moving to package.json `imports`.
+   - Carried: R-1 #1, #5, #6; R-2 #5, #7, #8; R-3 #2, #4, #5, #9. Also: the packed package (R-3 leftover), the dev loop and `pnpm dev`'s watcher (R-4), and `pnpm verify`.
 2. **Integration core:** the options schema (`cms.repo`, `customCss`), route injection, bundled integrations (`astro-icon`, sitemap, Tailwind), `env.schema` and fonts, and env checks for enabled Features (replacing `verifyRequiredEnvVars`).
+   - Carried: R-2 #4, #6; R-3 #7. Also: a missing secret at build time (R-2 leftover).
 3. **Content contract:** collections and schemas move into the package, and the public-contract rules (PRD §9) are written down.
+   - Carried: R-1 #2, #3, #4; R-2 #2.
 4. **Feature migration**, one Feature at a time: sermons, blog, calendar, team, pages, homepage and layout, subscribe and giving.
+   - Carried: R-2 #1, #3. Also: the real subscribe action (R-2 leftover).
 5. **CMS serving:** the admin page, the config endpoints, the scripture widget, and the validator built by the package.
+   - Carried: R-3 #1, #3, #6, #8.
 6. **Customization:** the editor's `customCss` (recommended: inline it from `config:theme`) and the developer stylesheet option.
 7. **Starter Site and CI:** generic sample content, the Netlify setup, the packed-tarball build and the smoke checks (PRD §8a).
+   - Carried: R-3 #10. Also: a Netlify build (R-2 and R-3 leftovers).
 8. **Sojourners cutover plan:** a branch with a deploy preview, the URL-parity check, and the local content snapshot.
 
 ## 4. Tickets
