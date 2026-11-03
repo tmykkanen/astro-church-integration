@@ -4,7 +4,7 @@
 //
 // Run from anywhere: node packages/astro-church/tests/packed/harness.mjs
 // Exits 0 when every check passes, 1 on the first failure. On failure the
-// temporary Site is kept, and its path printed, for debugging.
+// temporary directory is kept, and its path printed, for debugging.
 
 import { spawnSync } from "node:child_process";
 import {
@@ -18,52 +18,58 @@ import {
 	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, relative } from "node:path";
+import { isAbsolute, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // Literals the Theme must produce (same as tests/build/skeleton-route.mjs).
 const ROUTE = "/theme-skeleton";
 const MARKER = 'data-astro-church="skeleton-component"';
 
-const here = fileURLToPath(new URL(".", import.meta.url));
+const testsDir = fileURLToPath(new URL(".", import.meta.url));
 const repo = fileURLToPath(new URL("../../../../", import.meta.url));
 const pkg = join(repo, "packages/astro-church");
 const starter = join(repo, "playground");
 
-const work = realpathSync(mkdtempSync(join(tmpdir(), "astro-church-packed-")));
-const site = join(work, "site");
+const tempDir = realpathSync(
+	mkdtempSync(join(tmpdir(), "astro-church-packed-")),
+);
+const site = join(tempDir, "site");
 
 function fail(message) {
 	console.error(`FAIL: ${message}`);
-	console.error(`Temporary Site kept at ${site}`);
+	console.error(`Temporary files kept at ${tempDir}`);
 	process.exit(1);
 }
 
 function run(command, args, cwd) {
 	const result = spawnSync(command, args, { cwd, stdio: "inherit" });
+	const shown = `\`${command} ${args.join(" ")}\``;
+	if (result.error) {
+		fail(`${shown} couldn't start: ${result.error.message}`);
+	}
 	if (result.status !== 0) {
-		fail(`\`${command} ${args.join(" ")}\` exited with ${result.status}`);
+		fail(`${shown} exited with ${result.status ?? result.signal}`);
 	}
 }
 
 function isInside(child, parent) {
 	const rel = relative(parent, child);
-	return rel === "" || (!rel.startsWith("..") && !rel.startsWith("/"));
+	return !isAbsolute(rel) && rel !== ".." && !rel.startsWith(`..${sep}`);
 }
 
 // --- Setup ---------------------------------------------------------------
 
-if (isInside(work, repo)) {
-	fail(`the temporary directory ${work} is inside the workspace`);
+if (isInside(tempDir, repo)) {
+	fail(`the temporary directory ${tempDir} is inside the workspace`);
 }
 
 // 1. Pack the package.
-run("pnpm", ["pack", "--pack-destination", work], pkg);
-const tarballs = readdirSync(work).filter((name) => name.endsWith(".tgz"));
+run("pnpm", ["pack", "--pack-destination", tempDir], pkg);
+const tarballs = readdirSync(tempDir).filter((name) => name.endsWith(".tgz"));
 if (tarballs.length !== 1) {
-	fail(`expected one tarball in ${work}, found ${tarballs.length}`);
+	fail(`expected one tarball in ${tempDir}, found ${tarballs.length}`);
 }
-const tarball = join(work, tarballs[0]);
+const tarball = join(tempDir, tarballs[0]);
 
 // Smoke check, run first because it needs no install: the tarball ships no
 // test code. Tests and fixtures live in `tests/`, outside `src/`. Entries are
@@ -72,38 +78,51 @@ const testCode = [
 	/\.(test|spec)\.[cm]?[jt]sx?$/, // test files
 	/(^|\/)(tests?|__tests__)\//, // test directories
 ];
-const list = spawnSync("tar", ["-tzf", tarball], { encoding: "utf8" });
-if (list.status !== 0) {
-	fail(`\`tar -tzf\` couldn't list ${tarball}: ${list.stderr}`);
+const tarList = spawnSync("tar", ["-tzf", tarball], { encoding: "utf8" });
+if (tarList.status !== 0) {
+	fail(`\`tar -tzf\` couldn't list ${tarball}: ${tarList.stderr}`);
 }
-const shipped = list.stdout.split("\n").filter(Boolean);
-const leaked = shipped.filter((entry) => testCode.some((re) => re.test(entry)));
+const tarEntries = tarList.stdout.split("\n").filter(Boolean);
+const leaked = tarEntries.filter((entry) =>
+	testCode.some((re) => re.test(entry)),
+);
 if (leaked.length > 0) {
 	fail(`the tarball ships test code:\n  ${leaked.join("\n  ")}`);
 }
-console.log(`PASS: no test code among the tarball's ${shipped.length} entries`);
+console.log(
+	`PASS: no test code among the tarball's ${tarEntries.length} entries`,
+);
 
-// 2. Copy the Starter Site, leaving out installed and generated files.
-const skip = new Set(["node_modules", "dist", ".astro"]);
+// 2. Copy the Starter Site, leaving out installed and generated files, and
+// local env files, which can hold secrets and stay behind on failure.
+const excludedDirs = new Set(["node_modules", "dist", ".astro"]);
 cpSync(starter, site, {
 	recursive: true,
-	filter: (source) => !skip.has(relative(starter, source).split("/")[0]),
+	filter: (source) => {
+		const top = relative(starter, source).split(sep)[0];
+		return !excludedDirs.has(top) && !top.startsWith(".env");
+	},
 });
 
 // 3. Point the Site at the tarball instead of `workspace:*`, and pin the
 // workspace's pnpm, which doesn't apply outside the workspace.
 const manifestPath = join(site, "package.json");
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-const root = JSON.parse(readFileSync(join(repo, "package.json"), "utf8"));
+const rootManifest = JSON.parse(
+	readFileSync(join(repo, "package.json"), "utf8"),
+);
 manifest.dependencies["astro-church"] = `file:${tarball}`;
-manifest.packageManager = root.packageManager;
+manifest.packageManager = rootManifest.packageManager;
 writeFileSync(manifestPath, `${JSON.stringify(manifest, null, "\t")}\n`);
 
-// The workspace's build-script approvals, so pnpm doesn't stop on them.
-writeFileSync(
-	join(site, "pnpm-workspace.yaml"),
-	"allowBuilds:\n  esbuild: false\n  sharp: false\n",
-);
+// The workspace's build-script approvals (its `allowBuilds` block), so pnpm
+// doesn't stop on them.
+const workspaceYaml = readFileSync(join(repo, "pnpm-workspace.yaml"), "utf8");
+const allowBuilds = workspaceYaml.match(/^allowBuilds:\n(?:[ \t]+\S.*\n?)+/m);
+if (!allowBuilds) {
+	fail("no `allowBuilds` block in the workspace's pnpm-workspace.yaml");
+}
+writeFileSync(join(site, "pnpm-workspace.yaml"), allowBuilds[0]);
 
 // 4. Install. No lockfile exists, so CI's default frozen lockfile can't apply.
 run("pnpm", ["install", "--no-frozen-lockfile"], site);
@@ -130,7 +149,7 @@ if (!readFileSync(page, "utf8").includes(MARKER)) {
 }
 console.log(`PASS: ${ROUTE} is built from the packed Theme`);
 
-cpSync(join(here, "import-modules.mjs"), join(site, "import-modules.mjs"));
+cpSync(join(testsDir, "import-modules.mjs"), join(site, "import-modules.mjs"));
 run("node", ["import-modules.mjs"], site);
 
-rmSync(work, { recursive: true, force: true });
+rmSync(tempDir, { recursive: true, force: true });

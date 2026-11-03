@@ -24,7 +24,7 @@ A walking skeleton of the `astro-church` package. Each way the Theme ships code 
   - **Ported code and tests:** where `sojourners.church` source or tests use an extensionless or folder `#/` path, the port adds the exact file. Tyler approved this as one blanket change for every ported test (PRD §8a.1). The change touches only `#/` paths; assertions stay as they are.
 - **Remove `"sideEffects": false`.** Theme CSS imports are side effects, and with source shipped the Site's bundler could drop them silently.
 - **Peer `astro ^7.3.0`** (NFR-1's exact minimum). CI tests only the version the Starter Site pins. No version matrix in the MVP.
-- **Peer `typescript >=6`, required** (NFR-1, decided in ticket 02, 2026-11-03). TypeScript 5.x can't resolve the `#/` imports, and `astro check` doesn't report it, so the Theme's types silently become `any`. A required peer makes a 5.x Site warn when it installs. Sites without TypeScript get it installed for them by package managers that install peers automatically.
+- **Peer `typescript >=6`, required** (NFR-1, decided in ticket 02, 2026-11-03). TypeScript 5.x can't resolve the `#/` imports, and `astro check` doesn't report it, so the Theme's types silently become `any`. With a required peer, the install itself catches a 5.x Site: npm 7+ refuses to install (`ERESOLVE`, exit 1) and pnpm warns. Sites without TypeScript get it installed for them by npm 7+ and by pnpm (with its default `auto-install-peers`), so TypeScript 6 is in every Site's install.
 - **No ambient globals in `src/`:** no `declare global`, and no non-module `.d.ts` files. Types come from imports (env variables from `astro:env`, spec 3.2). A check in `pnpm verify` enforces this.
 
 ### Routes
