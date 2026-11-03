@@ -4,3 +4,6 @@ node_modules
 # Claude Code: per-developer settings, and the flag that allows a production-code exception
 .claude/settings.local.json
 .claude/exception
+
+# Astro generated types (the Starter Site and check-only roots like tests/astro-check)
+.astro/

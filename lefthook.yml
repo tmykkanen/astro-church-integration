@@ -1,7 +1,6 @@
 # Git hooks. Installed by lefthook's postinstall on `pnpm install`
-# (allowed in pnpm-workspace.yaml). Switch pre-push to `pnpm verify` once it exists
-# (ticket 05). The package has no build until the CMS bundle arrives (ticket 07),
-# so pre-push builds the Starter Site instead.
+# (allowed in pnpm-workspace.yaml). Pre-push runs `pnpm verify` (ticket 05),
+# the same gate every ticket must keep green.
 pre-commit:
   commands:
     biome:
@@ -11,7 +10,5 @@ pre-commit:
 
 pre-push:
   commands:
-    lint:
-      run: pnpm lint
-    starter-site:
-      run: pnpm --filter playground build
+    verify:
+      run: pnpm verify

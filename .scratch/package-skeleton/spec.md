@@ -40,7 +40,7 @@ Injected route entrypoints are `new URL("./…", import.meta.url)` from the inte
 - The bundle loads only on `/cms` and is editor-only, so it's outside NFR-3.
 - `src/lib/scriptureParsing/` moves in from `sojourners.church` unchanged. It's shared by the bundle and, later, the sermon schema and search. `bible-passage-reference-parser` and `bible-reference-formatter` go in `dependencies`.
 - `prepublishOnly` builds the bundle.
-- **No package build until the bundle exists.** Ticket 01 removes the Node build. tsdown fails when no entry matches, so the package has no `build`, `dev` or `prepublishOnly` script until ticket 07, and `files` is `["src"]` until ticket 07 adds `dist` back. Until `pnpm verify` (ticket 05), pre-push and CI build the Starter Site instead, and root `pnpm dev` runs only the Starter Site's `astro dev`.
+- **No package build until the bundle exists.** Ticket 01 removes the Node build. tsdown fails when no entry matches, so the package has no `build`, `dev` or `prepublishOnly` script until ticket 07, and `files` is `["src"]` until ticket 07 adds `dist` back. Root `pnpm dev` runs only the Starter Site's `astro dev` until ticket 08.
 
 ### Tests
 - Ported tests live in `packages/astro-church/tests/`, mirroring `sojourners.church`'s `tests/` (§8a.1). Vitest is the runner.
@@ -60,8 +60,8 @@ Injected route entrypoints are `new URL("./…", import.meta.url)` from the inte
 ### `pnpm verify`
 Runs, in order:
 1. Biome
-2. `tsc --noEmit` for the package (R-2 #5), plus `astro check` with the package as its root, for the Theme's `.astro` files. Neither `tsc` nor the Starter Site's `astro check` reads them (found in ticket 01).
-3. the no-globals check
+2. `tsc --noEmit` for the package (R-2 #5), plus `astro check` for the Theme's `.astro` files. Neither `tsc` nor the Starter Site's `astro check` reads them (found in ticket 01). The root is `tests/astro-check`, not the package: with the package as root, Astro reads `src/actions.ts` as the project's actions file and throws `ActionsWithoutServerOutputError`. The check-only root sets `srcDir` to a missing folder, and its tsconfig includes `../../src` (decided in ticket 05). Both run as the package's `typecheck` script.
+3. the no-globals check (`check:globals`, over `src/` only, so `client/` is never read), after its own tests (`test:no-globals`)
 4. Vitest
 5. the bundle build
 6. `astro check` and `astro build` for the Starter Site
