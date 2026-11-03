@@ -3,21 +3,15 @@
 	"version": "0.0.0",
 	"description": "Theme integration for astro church",
 	"type": "module",
-	"sideEffects": false,
 	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./dist/index.js"
-		}
+		".": "./src/index.ts"
+	},
+	"imports": {
+		"#/*": "./src/*"
 	},
 	"files": [
-		"dist"
+		"src"
 	],
-	"scripts": {
-		"dev": "tsdown --watch --no-clean",
-		"build": "tsdown",
-		"prepublishOnly": "pnpm build"
-	},
 	"keywords": [
 		"astro-integration",
 		"astro-component",
@@ -34,9 +28,9 @@
 	"homepage": "https://github.com/tmykkanen/astro-church-integration#readme",
 	"license": "MIT",
 	"peerDependencies": {
-		"astro": "^7.0.0"
+		"astro": "^7.3.0"
 	},
 	"devDependencies": {
-		"tsdown": "0.23.0"
+		"typescript": "6.0.3"
 	}
 }

@@ -30,5 +30,11 @@
 	},
 	"files": {
 		"includes": ["**", "!**/dist", "!**/.astro"]
+	},
+	"html": {
+		"experimentalFullSupportEnabled": true,
+		"formatter": {
+			"enabled": true
+		}
 	}
 }

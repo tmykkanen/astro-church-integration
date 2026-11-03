@@ -11,6 +11,7 @@ The root `pnpm dev` builds the bundle once, then runs the bundle watcher and the
 - [ ] `pnpm dev` starts cleanly from an empty `dist/`, without the R-1 race.
 - [ ] The reload table covers: Theme component, CSS, integration, collections, actions, saving the Site's actions file after a Theme action edit (R-2 leftover), and the rebuilt bundle (R-3 leftover).
 - [ ] The table is in the package README's contributing section.
+- [ ] The walking skeleton's injected route (`/theme-skeleton`, from ticket 01) has a named owner for its removal before the first release: a ticket in spec 3.4 or 3.7, recorded in `docs/next-steps.md`. Injected URLs are public contract (PRD §9), so it mustn't ship.
 - [ ] Spec close-out: spec retro written, `docs/next-steps.md` updated (3.1 done), and the PRD's R-4 note updated if the results changed it.
 
 ## Public contract

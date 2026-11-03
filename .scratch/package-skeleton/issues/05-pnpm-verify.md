@@ -9,6 +9,7 @@ One root command checks everything a ticket must keep green: Biome, the package 
 
 ## Acceptance criteria
 - [ ] `pnpm verify` runs Biome, `tsc --noEmit` for the package, the no-globals check, and the Starter Site's `astro check` and `astro build`, stopping at the first failure.
+- [ ] `pnpm verify` typechecks the Theme's `.astro` files, for example with `astro check --root packages/astro-church`. Neither `tsc` nor the Starter Site's `astro check` reads them (ticket 01). A deliberate type error in a Theme component fails `verify` (one-time check).
 - [ ] The no-globals check fails on a `declare global` or a non-module `.d.ts` under the package's `src/`, and ignores `client/`.
 - [ ] CI runs `pnpm verify`.
 - [ ] `docs/workflow.md` drops its "until it exists" note.

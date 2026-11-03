@@ -13,6 +13,7 @@ A script packs the package, installs the tarball into a temporary copy of the St
 - [ ] Smoke checks: the skeleton route's page exists, every shipped module imports (R-3 #9), and the tarball contains no test files.
 - [ ] A CI job runs the harness on every PR.
 - [ ] Risk checked: Astro compiles the package's `.ts` source from `node_modules` (`noExternal`).
+- [ ] Risk checked: does a Site's `astro check` typecheck the Theme's source with the Site's TypeScript? TypeScript 5.x rejects the `#/` imports (TS2307), and 6.0 accepts them (ticket 01). If 5.x fails, decide whether "TypeScript ≥ 6" goes in NFR-1 or the README. Record the result in Comments.
 
 ## Public contract
 None.

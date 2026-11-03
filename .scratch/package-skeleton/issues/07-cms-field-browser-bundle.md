@@ -35,7 +35,7 @@ Manual checks: bundle size is in line with R-3's 265 kB.
 
 ## Comments
 
-**2026-11-03, from ticket 01:** this ticket brings back the package build that ticket 01 removed: the `build` and `prepublishOnly` scripts, and `tsdown.config.ts`. Open question for Tyler: `prepublishOnly` runs on `publish` but not on `pnpm pack`, which ticket 02's harness uses, so the harness has to build first. `prepack` runs on both. Decide which hook to use before ticking the `prepublishOnly` criterion.
+**2026-11-03, from ticket 01:** this ticket brings back the package build that ticket 01 removed: the `build` and `prepublishOnly` scripts, and `tsdown.config.ts`. Open question for Tyler: `prepublishOnly` runs on `publish` but not on `pnpm pack`, which ticket 02's harness uses, so the harness has to build first. `prepack` runs on both. Decide which hook to use before ticking the `prepublishOnly` criterion. Ticket 01 also left `files` as `["src"]`, so add `dist` back (spec, **Package shape**).
 
 ## Retro
 Learned: · Surprised by: · Next time:
