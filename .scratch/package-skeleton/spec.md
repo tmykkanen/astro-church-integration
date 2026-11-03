@@ -31,8 +31,8 @@ A walking skeleton of the `astro-church` package. Each way the Theme ships code 
 Injected route entrypoints are `new URL("./…", import.meta.url)` from the integration, outside `exports` (R-3 #2). Route modules don't use `import.meta.url`.
 
 ### Tailwind (FR-6)
-- The Theme's stylesheet declares `@source` for the Theme's own files, with a path relative to the stylesheet. That path still resolves from the pnpm store.
-- The Site's content is covered by Tailwind's automatic detection from the project root. The Theme adds nothing for it. If the smoke check shows otherwise, the integration generates an `@source` with an absolute path instead.
+- The Theme's stylesheet declares `@source` for the Theme's own files, with a path relative to the stylesheet. That path still resolves from the pnpm store. Tailwind doesn't report an `@source` path that doesn't exist, so a wrong path fails silently (ticket 03).
+- The Site's content is covered by Tailwind's automatic detection from the project root. The Theme adds nothing for it. **Confirmed in ticket 03 (2026-11-03):** in a packed install, a class used only in Site content reaches the Theme route's CSS, so the fallback (an integration-generated absolute `@source`) isn't needed.
 - Who adds the Tailwind Vite plugin is spec 3.2 (FR-3). Until then the Starter Site keeps its own.
 
 ### CMS browser bundle (R-3 #4, #5)
@@ -84,7 +84,7 @@ What exists when this spec is done (Tyler names and shapes all of it):
 1. **Packed-install harness** (built Starter Site):
    - `astro check` passes.
    - A type probe asserts that the re-exported `collections`, `server` and `satisfies` type aren't `any` (DX-3). The check that a collection entry's `data` isn't `any` (R-1 #1) moves to spec 3.3, because `collections` is empty here.
-   - The built CSS contains both the Theme-only and the content-only Tailwind classes.
+   - The CSS the skeleton route's page loads contains both the Theme-only and the content-only Tailwind classes. Checking the route's own CSS, not any built CSS, keeps the Site's stylesheet from satisfying it (narrowed in ticket 03, 2026-11-03).
    - The skeleton route renders.
    - Every shipped module imports (R-3 #9).
    - No test files are in the tarball.
