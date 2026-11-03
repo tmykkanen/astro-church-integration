@@ -77,7 +77,7 @@ What exists when this spec is done (Tyler names and shapes all of it):
 ## Test seams (approved 2026-11-03)
 1. **Packed-install harness** (built Starter Site):
    - `astro check` passes.
-   - A type probe asserts that a re-exported collection entry's `data` isn't `any` (R-1 #1, DX-3).
+   - A type probe asserts that the re-exported `collections`, `server` and `satisfies` type aren't `any` (DX-3). The check that a collection entry's `data` isn't `any` (R-1 #1) moves to spec 3.3, because `collections` is empty here.
    - The built CSS contains both the Theme-only and the content-only Tailwind classes.
    - The skeleton route renders.
    - Every shipped module imports (R-3 #9).
@@ -85,6 +85,9 @@ What exists when this spec is done (Tyler names and shapes all of it):
 2. **Vitest:** the ported `scriptureParsing.test.ts`, unchanged.
 3. **No-globals check** over `src/`.
 4. **Manual:** the dev reload table.
+
+## Tickets
+`issues/01`–`08`, approved 2026-11-03.
 
 ## Risks for the first ticket
 - `#/` resolution through `imports` (extensionless and directory imports) in Vite, TypeScript and Vitest.
@@ -94,7 +97,7 @@ What exists when this spec is done (Tyler names and shapes all of it):
 ## Carried items
 | Item | Outcome |
 |---|---|
-| R-1 #1 `types: ["astro/client"]`, `any` in `.d.ts` | Not needed (no `.d.ts`). The type probe covers the risk. |
+| R-1 #1 `types: ["astro/client"]`, `any` in `.d.ts` | Not needed (no `.d.ts`). The type probe covers the risk; its entry-`data` check moves to 3.3. |
 | R-1 #5, R-2 #7 Astro paths in shipped types | Not needed (no `.d.ts`). |
 | R-1 #6, R-2 #8 dev loop | Replaced by the dev loop above. |
 | R-2 #5 `tsc --noEmit` in CI | In `pnpm verify`. |
