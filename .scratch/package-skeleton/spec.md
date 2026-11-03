@@ -17,7 +17,11 @@ A walking skeleton of the `astro-church` package. Each way the Theme ships code 
 
   There are no other exports: routes, components and styles stay internal.
 - **`files`:** `["src", "dist"]`. Tests live outside `src/`, so nothing needs excluding.
-- **Internal alias:** `"imports": { "#/*": "./src/*" }`. Imports are extensionless, as in `sojourners.church`, with `moduleResolution: "bundler"` in the package tsconfig. If the first ticket finds that Vite, TypeScript or Vitest doesn't resolve extensionless or directory imports (`#/lib/scriptureParsing/`) through `imports`, fall back to explicit `.ts` imports.
+- **Internal alias:** `"imports": { "#/*": "./src/*" }`, with `moduleResolution: "bundler"` in the package tsconfig. **`#/` imports name the file exactly:** `#/lib/getImage.ts`, and `#/lib/scriptureParsing/index.ts` for a folder (decided in ticket 01, 2026-11-03).
+  - **Why:** in `sojourners.church`, `#/` resolved through tsconfig `paths`, which allow extensionless and folder imports. Through `imports`, Vite still resolves them, but `tsc` doesn't: it doesn't add extensions or `index` files to an `imports` target, even with `bundler` resolution (TS2307, TypeScript 6.0.3).
+  - **Rejected:** a fallback array, `"#/*": ["./src/*", "./src/*.ts", "./src/*/index.ts"]`. It passes `tsc`, `astro check` and `astro build`, but only Vite resolves the paths. Node falls back to the next entry only when a target is invalid, not when the file is missing, so bare Node can't load the package.
+  - **Relative imports** (`./parser`) still resolve without an extension under `bundler`. The rule covers `#/` only.
+  - **Ported code and tests:** where `sojourners.church` source or tests use an extensionless or folder `#/` path, the port adds the exact file. Tyler approved this as one blanket change for every ported test (PRD §8a.1). The change touches only `#/` paths; assertions stay as they are.
 - **Remove `"sideEffects": false`.** Theme CSS imports are side effects, and with source shipped the Site's bundler could drop them silently.
 - **Peer `astro ^7.3.0`** (NFR-1's exact minimum). CI tests only the version the Starter Site pins. No version matrix in the MVP.
 - **No ambient globals in `src/`:** no `declare global`, and no non-module `.d.ts` files. Types come from imports (env variables from `astro:env`, spec 3.2). A check in `pnpm verify` enforces this.
@@ -90,7 +94,7 @@ What exists when this spec is done (Tyler names and shapes all of it):
 `issues/01`–`08`, approved 2026-11-03.
 
 ## Risks for the first ticket
-- `#/` resolution through `imports` (extensionless and directory imports) in Vite, TypeScript and Vitest.
+- ~~`#/` resolution through `imports` (extensionless and directory imports) in Vite, TypeScript and Vitest.~~ Checked in ticket 01: Vite resolves them and `tsc` doesn't, so `#/` imports use exact file paths (see **Internal alias**). Vitest uses Vite's resolver, so ticket 06 confirms it.
 - Astro running the packed package through Vite (`noExternal`), so `.ts` from `node_modules` compiles.
 - Vitest in the package: `sojourners.church` uses `getViteConfig` from `astro/config`, and the package has no Astro config.
 

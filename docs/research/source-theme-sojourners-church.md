@@ -55,4 +55,4 @@ The working source for the conversion is `~/repos/@sojourners/sojourners.church`
   - the two pre-build scripts
 
   Whether an integration can provide each of these is a research question; for collections the answer is no ([loader reference](https://docs.astro.build/en/reference/content-loader-reference/)).
-- **The `#/` alias** must become package-relative imports or package.json `imports` (`#/*`), which Node and Vite resolve natively inside a package.
+- **The `#/` alias** must become package-relative imports or package.json `imports` (`#/*`), which Node and Vite resolve natively inside a package. Through `imports`, `tsc` won't resolve the extensionless and folder paths `sojourners.church` uses, so ported `#/` imports name the exact file (spec 3.1, **Internal alias**).

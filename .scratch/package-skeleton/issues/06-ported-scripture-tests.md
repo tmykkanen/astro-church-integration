@@ -10,7 +10,8 @@
 ## Acceptance criteria
 - [ ] `scriptureParsing` and the types it needs are in the package, matching `sojourners.church` apart from changes Tyler approves and logs here.
 - [ ] `bible-passage-reference-parser` and `bible-reference-formatter` are `dependencies` (types package as a dev dependency if needed).
-- [ ] Vitest is configured in the package. `tests/lib/scriptureParsing.test.ts` is copied unchanged and passes.
+- [ ] Vitest is configured in the package. `tests/lib/scriptureParsing.test.ts` is copied unchanged and passes, apart from its `#/lib/scriptureParsing/` import becoming `#/lib/scriptureParsing/index.ts`. Tyler approved that change, and changes like it, for every ported test (spec, **Internal alias**).
+- [ ] `#/` imports in the moved source name the file exactly (`types.ts` imports `#/lib/types`, which becomes the exact file).
 - [ ] `pnpm verify` runs Vitest.
 - [ ] Risk checked: does `getViteConfig` from `astro/config` (as in `sojourners.church`) work in a package with no Astro config? Record the answer, and any config change, in Comments.
 - [ ] The relative imports with `.ts` extensions typecheck in the package, and through the Starter Site's `astro check`.
@@ -20,7 +21,7 @@ None.
 
 ## Seams and test list
 Seam: exported functions (`parseScriptureRef`, `isValidScriptureRef`).
-- [ ] Ported: `tests/lib/scriptureParsing.test.ts` (passes unchanged)
+- [ ] Ported: `tests/lib/scriptureParsing.test.ts` (change approved: the `#/` import path names the exact file; assertions unchanged)
 Build and smoke checks: the packed-install harness still passes (the new modules import).
 Manual checks: none.
 
