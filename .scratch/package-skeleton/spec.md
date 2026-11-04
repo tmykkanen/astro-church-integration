@@ -61,8 +61,8 @@ Injected route entrypoints are `new URL("./…", import.meta.url)` from the inte
 Runs, in order:
 1. Biome
 2. `tsc --noEmit` for the package (R-2 #5), plus `astro check` for the Theme's `.astro` files. Neither `tsc` nor the Starter Site's `astro check` reads them (found in ticket 01). The root is `tests/astro-check`, not the package: with the package as root, Astro reads `src/actions.ts` as the project's actions file and throws `ActionsWithoutServerOutputError`. The check-only root sets `srcDir` to a missing folder, and its tsconfig includes `../../src` (decided in ticket 05). Both run as the package's `typecheck` script.
-3. the no-globals check (`check:globals`, over `src/` only, so `client/` is never read), after its own tests (`test:no-globals`)
-4. Vitest
+3. the no-globals check (`check:globals`, over `src/` only, so `client/` is never read)
+4. Vitest: the package's unit tests, including the no-globals check's own tests (`tests/checks/no-globals.test.mjs`, moved from `node:test` in ticket 09)
 5. the bundle build
 6. `astro check` and `astro build` for the Starter Site
 

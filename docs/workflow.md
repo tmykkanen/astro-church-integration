@@ -72,7 +72,7 @@ See the TDD policy below. Tyler owns every interface: exported names, option sha
 
 `pnpm verify`, then the checks the ticket names: a Starter Site build, the smoke checks, and a manual look in the Starter Site's dev server. Passing tests aren't proof.
 
-`pnpm verify` runs, stopping at the first failure: Biome, the package typecheck (`tsc` plus `astro check` on the Theme's `.astro` files), the no-globals check and its tests, then the Starter Site's `astro check` and the build test. The order and what each later ticket adds (Vitest, the bundle build) are in the package-skeleton spec. CI runs it on every push and PR.
+`pnpm verify` runs, stopping at the first failure: Biome, the package typecheck (`tsc` plus `astro check` on the Theme's `.astro` files), the no-globals check, Vitest (the package's unit tests, including the no-globals check's own), then the Starter Site's `astro check` and the build test. The order and what later tickets add (the bundle build) are in the package-skeleton spec. CI runs it on every push and PR.
 
 Lefthook (`lefthook.yml`) backs this up. Pre-commit runs Biome on the staged files and stages its fixes, and pre-push runs `pnpm verify`.
 
