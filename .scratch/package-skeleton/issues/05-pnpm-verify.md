@@ -48,8 +48,10 @@ Manual checks: none.
   - Fixed: `spec.md` step 2 records the `tests/astro-check` root and why; its stale "Until `pnpm verify`" line is gone.
   - Fixed: regexes renamed `SOURCE_FILE` and `MODULE_SYNTAX`, the comment on the regex's limits corrected, failures printed with `FAIL:` like the sibling scripts; root `test:checks` renamed `test:no-globals`; the `ci.yml` comment points to the spec instead of repeating the steps.
   - Kept: test 1 overlaps `check:globals` (cheap); test 4 doesn't pin the `check:globals` path (Tyler's decision above).
-  - Open: package `package.json` key order (Tyler's); CI run on push.
+  - Fixed (Tyler): package `package.json` key order; `scripts` sits after `files`, before `keywords`, as committed in `e5ff899`.
+  - Closed: CI run on push (see below).
   - Accepted deviation (Tyler, 2026-11-03): the agent drafted the package's first unit test (`no-globals.tests.mjs`, run with `node:test`), which `workflow.md` ("first test of each new kind") reserves for Tyler. Tyler reviewed and approved each test as it was drafted and kept them as written. The rule still applies to the first Vitest test (ticket 06).
+- **2026-11-03, CI on push:** CI run 41742687138 on `main` at `212a3a0` (the ticket 05 merge) passed: `test` (`pnpm verify`) and `packed` (`pnpm test:packed`). The same push's Release run failed because repo settings didn't allow Actions to create PRs. That's unrelated to this ticket; after the setting was enabled, the rerun opened release PR #2.
 
 ## Retro
 Learned: · Surprised by: · Next time:
