@@ -93,12 +93,12 @@ What exists when this spec is done (Tyler names and shapes all of it):
 4. **Manual:** the dev reload table.
 
 ## Tickets
-`issues/01`–`08`, approved 2026-11-03.
+`issues/01`–`08`, approved 2026-11-03. `issues/09` (the no-globals tests on Vitest) added 2026-11-03 after ticket 06.
 
 ## Risks for the first ticket
-- ~~`#/` resolution through `imports` (extensionless and directory imports) in Vite, TypeScript and Vitest.~~ Checked in ticket 01: Vite resolves them and `tsc` doesn't, so `#/` imports use exact file paths (see **Internal alias**). Vitest uses Vite's resolver, so ticket 06 confirms it.
+- ~~`#/` resolution through `imports` (extensionless and directory imports) in Vite, TypeScript and Vitest.~~ Checked in ticket 01: Vite resolves them and `tsc` doesn't, so `#/` imports use exact file paths (see **Internal alias**). Vitest uses Vite's resolver; confirmed in ticket 06, with no alias.
 - Astro running the packed package through Vite (`noExternal`), so `.ts` from `node_modules` compiles.
-- Vitest in the package: `sojourners.church` uses `getViteConfig` from `astro/config`, and the package has no Astro config.
+- ~~Vitest in the package: `sojourners.church` uses `getViteConfig` from `astro/config`, and the package has no Astro config.~~ Checked in ticket 06: with no Astro config, `getViteConfig` reads `src/actions.ts` and throws `ActionsWithoutServerOutputError`. The package uses a plain `vitest/config` instead; spec 3.3 revisits it if `astro:*` mocks need Astro's plugins.
 
 ## Carried items
 | Item | Outcome |

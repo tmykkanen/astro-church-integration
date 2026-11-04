@@ -15,7 +15,8 @@
 		"src"
 	],
 	"scripts": {
-		"typecheck": "tsc --noEmit && astro check --root tests/astro-check"
+		"typecheck": "tsc --noEmit && astro check --root tests/astro-check",
+		"test": "vitest run"
 	},
 	"keywords": [
 		"astro-integration",
@@ -32,12 +33,18 @@
 	"bugs": "https://github.com/tmykkanen/astro-church-integration/issues",
 	"homepage": "https://github.com/tmykkanen/astro-church-integration#readme",
 	"license": "MIT",
+	"dependencies": {
+		"bible-passage-reference-parser": "^4.0.0",
+		"bible-reference-formatter": "^1.0.1",
+		"@types/bible-reference-formatter": "^1.0.3"
+	},
 	"peerDependencies": {
 		"astro": "^7.3.0",
 		"typescript": ">=6"
 	},
 	"devDependencies": {
 		"@astrojs/check": "0.9.10",
-		"typescript": "6.0.3"
+		"typescript": "6.0.3",
+		"vitest": "^4.1.12"
 	}
 }
