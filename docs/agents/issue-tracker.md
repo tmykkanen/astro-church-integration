@@ -9,7 +9,7 @@ Issues and specs for this repo live as markdown files in `.scratch/`.
 - Implementation issues are one file per ticket at `.scratch/<slug>/issues/<NN>-<slug>.md`, numbered from `01`, never a single combined tickets file
 - Triage state is recorded as a `Status:` line near the top of each issue file (see `triage-labels.md` for the role strings). New specs and tickets get `**Status:** ready-for-human`
 - Tickets follow the template below
-- When a ticket is implemented and committed, set `**Status:** resolved` and tick its acceptance criteria. A blank `## Retro` doesn't block resolving: leave the placeholder in place
+- When a ticket is implemented and committed, set `**Status:** resolved` and tick its acceptance criteria
 - Comments and conversation history append to the bottom of the file under a `## Comments` heading
 
 ## Ticket template
@@ -50,9 +50,6 @@ Manual checks: <dev server, CMS, URL parity>.
 ## Learning goal (optional)
 
 ## Comments
-
-## Retro
-Learned: · Surprised by: · Next time:
 ```
 
 ## When a skill says "publish to the issue tracker"

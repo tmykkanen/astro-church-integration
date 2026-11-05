@@ -28,10 +28,10 @@ How the Theme gets built: developer-led, spec-driven, test-first. The Theme Auth
                         ▲──────────────────────────────────────────────┘
                                                         │ test list done
                                                         ▼
- 8 Verify ──► 9 Review ──► 10 Fix ──► 11 Commit & retro
+ 8 Verify ──► 9 Review ──► 10 Fix ──► 11 Commit
    verify,      reports      YOU        you commit;
-   build,       only                    retro optional
-   manual                               end of spec: spec retro + doc updates
+   build,       only                    end of spec: doc updates
+   manual
 ```
 
 **Tyler writes production code** at steps 0, 6, 7 and 10, and nowhere else unless granting an `exception:`.
@@ -87,9 +87,9 @@ Lefthook (`lefthook.yml`) backs this up. Pre-commit runs Biome on the staged fil
 
 It reports findings with proposed fixes and changes nothing. Tyler decides what to act on.
 
-### 10–11. Fix, commit, retro
+### 10–11. Fix and commit
 
-Tyler fixes, commits and fast-forwards `main` (history stays linear). A user-visible change gets a changeset (`pnpm changeset`). The ticket's `## Retro` is optional. At the end of each spec: a short spec retro (personal lessons, plus environment improvements) and doc updates.
+Tyler fixes, commits and fast-forwards `main` (history stays linear). A user-visible change gets a changeset (`pnpm changeset`). At the end of each spec: doc updates.
 
 ### Which doc to update
 
@@ -188,7 +188,7 @@ playground/             the Starter Site, which doubles as the playground (produ
 - `.scratch/` is committed despite its name; the skills expect it.
 - No separate test plans: seams live in the spec, test lists in the ticket.
 - No external issue tracker.
-- **Committed:** all docs, specs, tickets (with Comments and Retro).
+- **Committed:** all docs, specs, tickets (with Comments).
 - **Temporary:** scratch experiments, `spike/*` branches, the local Sojourners content snapshot, `.claude/exception` (all gitignored or unmerged).
 
 ## Agent instructions
