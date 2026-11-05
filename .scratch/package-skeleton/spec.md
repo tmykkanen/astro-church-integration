@@ -1,6 +1,6 @@
 # Spec 3.1: Package skeleton and publishing
 
-**Status:** ready-for-human
+**Status:** resolved
 **PRD:** FR-1, FR-5 (entry points), FR-6, DX-3, DX-5, NFR-1, NFR-3, §8a.1–3 · **ADRs:** 0002, 0004, 0005
 **Decided:** grilling session, 2026-11-03 (Q1–Q16)
 

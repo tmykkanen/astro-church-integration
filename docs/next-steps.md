@@ -36,7 +36,7 @@ Useful references: `docs/research/integration-capabilities.md` and the July spik
 
 One spec per area. Each area lists the items its spec must settle. `R-1 #2` means item 2 under "Carried into the spec" in that spike's note.
 
-1. **Package skeleton and publishing:** spec written 2026-11-03 (`.scratch/package-skeleton/spec.md`, ADR-0005: the package ships its source). Its carried-items table records each outcome; R-1 #1, #5 and R-2 #7 are no longer needed. Tickets 01–08 written 2026-11-03, plus 09 (the no-globals tests on Vitest) after 06; 01–07 and 09 resolved. Unblocked next: 08.
+1. **Package skeleton and publishing:** spec written 2026-11-03 (`.scratch/package-skeleton/spec.md`, ADR-0005: the package ships its source). Its carried-items table records each outcome; R-1 #1, #5 and R-2 #7 are no longer needed. Tickets 01–08 written 2026-11-03, plus 09 (the no-globals tests on Vitest) after 06; all resolved. **Done 2026-11-05**; the spec retro was skipped.
    Original scope: `exports`, `files`, how `.astro`/CSS/client scripts ship (a tsdown copy step or raw source), Tailwind `@source`, and the `#/` alias moving to package.json `imports`.
    - Carried: R-1 #1, #5, #6; R-2 #5, #7, #8; R-3 #2, #4, #5, #9. Also: the packed package (R-3 leftover), the dev loop and `pnpm dev`'s watcher (R-4), and `pnpm verify`.
 2. **Integration core:** the options schema (`cms.repo`, `customCss`), route injection, bundled integrations (`astro-icon`, sitemap, Tailwind), `env.schema` and fonts, and env checks for enabled Features (replacing `verifyRequiredEnvVars`).
