@@ -5,7 +5,10 @@ import astroChurch from "astro-church";
 
 // https://astro.build/config
 export default defineConfig({
-	integrations: [astroChurch()],
+	site: "http://localhost",
+	integrations: [
+		astroChurch({ cms: { repo: "tmykkanen/astro-church-integration" } }),
+	],
 	vite: {
 		plugins: [tailwindcss()],
 	},

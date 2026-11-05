@@ -65,6 +65,7 @@ Feature env checks move from a pre-config script into the Features themselves, t
 - **`cms.repo`:** a required string in the form `owner/name` (FR-16, R-3 #7). There's no `cms.branch`: parity, and adding it later is not breaking.
 - **`customCss`:** an optional array of strings. It's validated and typed here, with no behaviour until spec 3.6 (FR-19).
 - **`AstroChurchOptions`:** a type-only export from `astro-church`, derived from the schema's *input* type, so optional fields stay optional. The integration function's parameter uses the same type. **Public contract:** the options and this type name join PRD §9. This is additive.
+- **Unknown options are rejected:** the schema and `cms` are strict objects, so a misspelt key (`customCSS`, `cms.repository`) fails with a message naming it instead of being dropped. Decided at ticket 01's review, before any release; loosening it later is additive, tightening it after a release would be breaking.
 - **`site` is required:** when `config.site` is unset, `astro:config:setup` fails with a message naming `site` (Q11).
 
 ### Bundled integrations and the Tailwind plugin (Q3, Q14)
@@ -121,7 +122,7 @@ Good tests here check what a Site Developer or a built Site can observe: the con
    - the skeleton route's CSS sets `--font-sans` and the font files are emitted
    - Tailwind's preflight appears exactly once in the skeleton route's CSS
    - the skeleton route's `astro-icon` icon renders
-4. **The type probe** (extends 3.1's): a wrong option type in a probe `astro.config` fails `astro check`, and `AstroChurchOptions` isn't `any`.
+4. **The type probe** (extends 3.1's): a wrong option type passed to the integration in `fixtures/type-probe.ts` fails `astro check` (under `@ts-expect-error`), and `AstroChurchOptions` isn't `any`. Ticket 01 put these probes in the existing probe file rather than a separate probe `astro.config`: same types, one file for the harness to copy.
 
 **Carried to 3.4:** the end-to-end case where a Feature is enabled, its variable is missing and the build fails. There is no Feature to drive it here.
 

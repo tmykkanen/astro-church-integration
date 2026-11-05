@@ -10,6 +10,39 @@ An [Astro integration](https://docs.astro.build/en/guides/integrations-guide/) t
 pnpm add astro-church
 ```
 
+## Configuration
+
+Add the integration to your Site's `astro.config.mjs`, and set `site`:
+
+```js
+import { defineConfig } from "astro/config";
+import astroChurch from "astro-church";
+
+export default defineConfig({
+	site: "https://example.church",
+	integrations: [astroChurch({ cms: { repo: "owner/name" } })],
+});
+```
+
+`site` is required: the Theme stops dev and build without it.
+
+### Options
+
+| Option | Type | Required | Description |
+| --- | --- | --- | --- |
+| `cms.repo` | `string` | Yes | The GitHub repository the CMS edits, in the form `owner/name` (for example `example/grace-church`). |
+| `customCss` | `string[]` | No | Reserved for your own stylesheets. It has no effect yet. |
+
+The options are checked when `astro dev` or `astro build` starts. A missing or invalid option stops it with an error that names the option and the value it expects. Unknown options are rejected too, so a misspelling such as `customCSS` fails instead of being ignored.
+
+To build the options in a separate variable or file, type them with `AstroChurchOptions`:
+
+```ts
+import type { AstroChurchOptions } from "astro-church";
+
+const options: AstroChurchOptions = { cms: { repo: "owner/name" } };
+```
+
 ## Contributing
 
 This package lives in a monorepo:

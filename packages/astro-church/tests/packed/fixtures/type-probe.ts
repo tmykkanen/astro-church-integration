@@ -6,6 +6,8 @@
 //
 // Probes read the Site's own re-exports, so they cover the path a Site uses.
 
+import type astroChurch from "astro-church";
+import type { AstroChurchOptions } from "astro-church";
 import type { ThemeActions } from "astro-church/actions";
 
 import { server } from "./actions";
@@ -38,3 +40,37 @@ export const serverWithSiteAction = {
 // a key of `ThemeActions`. A closed type's keys are only its own actions.
 type AcceptsAnyKey = string extends keyof ThemeActions ? true : false;
 export const themeActionsAcceptsSiteKeys: AcceptsAnyKey = true;
+
+// Integration options (spec 3.2, ticket 01). `AstroChurchOptions` isn't `any`.
+export const astroChurchOptionsIsNotAny: IsAny<AstroChurchOptions> = false;
+
+// The integration's parameter is `AstroChurchOptions`, in both directions, so
+// a Site that types its options separately can pass them straight in.
+type IntegrationParam = Parameters<typeof astroChurch>[0];
+type SameType = [IntegrationParam] extends [AstroChurchOptions]
+	? [AstroChurchOptions] extends [IntegrationParam]
+		? true
+		: false
+	: false;
+export const integrationTakesAstroChurchOptions: SameType = true;
+
+// Valid options type-check: `customCss` is optional.
+export const minimalOptions: AstroChurchOptions = {
+	cms: { repo: "example/grace-church" },
+};
+
+// A wrong option type fails. Each `@ts-expect-error` itself fails `astro
+// check` (TS2578) if the line below it stops being an error. The calls sit in
+// a function that's never run: only their types are checked.
+export function wrongOptionTypes(astroChurchFn: typeof astroChurch) {
+	// @ts-expect-error `cms.repo` must be a string.
+	astroChurchFn({ cms: { repo: 42 } });
+	// @ts-expect-error `cms` is required.
+	astroChurchFn({});
+	const stringCustomCss = {
+		cms: { repo: "example/grace-church" },
+		customCss: "theme.css",
+	};
+	// @ts-expect-error `customCss` must be an array of strings.
+	astroChurchFn(stringCustomCss);
+}
