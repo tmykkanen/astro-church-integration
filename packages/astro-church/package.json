@@ -16,6 +16,7 @@
 		"dist"
 	],
 	"scripts": {
+		"dev": "tsdown --watch --no-clean",
 		"typecheck": "tsc --noEmit && tsc -p client && astro check --root tests/astro-check",
 		"test": "vitest run",
 		"build": "tsdown",
