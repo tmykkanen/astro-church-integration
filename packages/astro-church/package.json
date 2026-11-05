@@ -1,6 +1,6 @@
 {
 	"name": "astro-church",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"description": "Theme integration for astro church",
 	"type": "module",
 	"exports": {
