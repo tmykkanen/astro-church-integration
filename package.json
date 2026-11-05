@@ -12,7 +12,7 @@
 		"lint": "biome check .",
 		"lint:fix": "biome check --write",
 		"check:globals": "node packages/astro-church/tests/checks/no-globals.mjs packages/astro-church/src",
-		"verify": "pnpm lint && pnpm --filter astro-church typecheck && pnpm check:globals && pnpm --filter astro-church test && pnpm --filter playground exec astro check && node packages/astro-church/tests/build/skeleton-route.mjs",
+		"verify": "pnpm lint && pnpm --filter astro-church typecheck && pnpm check:globals && pnpm --filter astro-church test && pnpm --filter astro-church build && pnpm --filter playground exec astro check && node packages/astro-church/tests/build/skeleton-route.mjs",
 		"test:packed": "node packages/astro-church/tests/packed/harness.mjs",
 		"ci-version": "changeset version && pnpm install --no-frozen-lockfile",
 		"ci-publish": "changeset publish"

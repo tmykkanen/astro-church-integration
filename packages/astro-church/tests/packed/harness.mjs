@@ -1,9 +1,12 @@
-// Packed-install harness (ticket 02, spec 3.1): packs the package, installs
-// the tarball into a copy of the Starter Site outside the workspace, runs
-// `astro check` (including the type probe in `fixtures/`, ticket 04) and
-// `astro build`, then the smoke checks: the route renders,
-// its page loads the Theme-only and Site-content Tailwind classes and the
-// route's client script (ticket 03), and every shipped module imports.
+// Packed-install harness (ticket 02, spec 3.1): packs the package and checks
+// the tarball ships no test code and exactly the CMS field bundle in `dist/`
+// (ticket 07). It installs the tarball into a copy of the Starter Site
+// outside the workspace and checks the installed bundle has no imports and
+// registers the scripture field (ticket 07). Then it runs `astro check`
+// (including the type probe in `fixtures/`, ticket 04) and `astro build`,
+// and the smoke checks: the route renders, its page loads the Theme-only and
+// Site-content Tailwind classes and the route's client script (ticket 03),
+// and every shipped module imports.
 //
 // Run from anywhere: node packages/astro-church/tests/packed/harness.mjs
 // Exits 0 when every check passes, 1 on the first failure. On failure the
@@ -20,9 +23,10 @@ import {
 	rmSync,
 	writeFileSync,
 } from "node:fs";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { isAbsolute, join, relative, sep } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 // Literals the Theme must produce (same as tests/build/skeleton-route.mjs).
 const ROUTE = "/theme-skeleton";
@@ -39,6 +43,10 @@ const CONTENT_CLASS = "decoration-dotted";
 // literals the script uses, so finding it in the JS the page loads shows the
 // script shipped.
 const SCRIPT_MARKER = "astro-church:skeleton-script";
+
+// The CMS field's browser bundle (ticket 07), built from
+// `client/scriptureField.ts`. The path is relative to the package root.
+const BUNDLE = "dist/client/scriptureField.js";
 
 const testsDir = fileURLToPath(new URL(".", import.meta.url));
 const repo = fileURLToPath(new URL("../../../../", import.meta.url));
@@ -108,6 +116,23 @@ console.log(
 	`PASS: no test code among the tarball's ${tarEntries.length} entries`,
 );
 
+// Smoke check (ticket 07): the tarball's `dist/` is exactly the CMS field's
+// browser bundle, which `prepack` builds. Nothing serves it yet (spec 3.5).
+// Anything else there (a stray entry, a chunk, a `.d.ts`) fails the check.
+const shippedDist = tarEntries.filter((entry) =>
+	entry.startsWith("package/dist/"),
+);
+const expectedDist = [`package/${BUNDLE}`];
+if (
+	shippedDist.length !== expectedDist.length ||
+	!expectedDist.every((entry) => shippedDist.includes(entry))
+) {
+	fail(
+		`the tarball's dist/ should be exactly ${BUNDLE}, found:\n  ${shippedDist.join("\n  ") || "(nothing)"}`,
+	);
+}
+console.log(`PASS: the tarball's dist/ is exactly the CMS field bundle`);
+
 // 2. Copy the Starter Site, leaving out installed and generated files, and
 // local env files, which can hold secrets and stay behind on failure.
 const excludedDirs = new Set(["node_modules", "dist", ".astro"]);
@@ -155,6 +180,46 @@ if (isInside(installed, repo)) {
 		`astro-church resolves into the workspace (${installed}), not the tarball`,
 	);
 }
+
+// Smoke check (ticket 07): the installed bundle imports nothing, so Sveltia's
+// page can load it as one script: no static `import`, no `export … from`, no
+// dynamic `import()`. A text search isn't enough: the bundled parser has an
+// error message whose text contains an import statement. es-module-lexer
+// (what Vite and Astro use to find imports) skips strings and comments. It
+// isn't our dependency, so load Astro's copy, as `import-modules.mjs` loads
+// Vite. If Astro drops it, add it to the root devDependencies.
+const fromAstro = createRequire(
+	realpathSync(join(site, "node_modules/astro/package.json")),
+);
+const lexer = await import(
+	pathToFileURL(fromAstro.resolve("es-module-lexer")).href
+);
+await lexer.init;
+const bundleSource = readFileSync(join(installed, BUNDLE), "utf8");
+const [bundleImports] = lexer.parse(bundleSource, BUNDLE);
+// `import.meta` is an expression, not an import; the lexer lists it too.
+const realImports = bundleImports.filter(
+	(found) => found.t !== lexer.ImportType.ImportMeta,
+);
+if (realImports.length > 0) {
+	const shown = realImports.map((found) => {
+		const line = bundleSource.slice(0, found.ss).split("\n").length;
+		return `line ${line}: ${bundleSource.slice(found.ss, found.se)}`;
+	});
+	fail(
+		`the CMS field bundle ${BUNDLE} has ${realImports.length} import(s):\n  ${shown.join("\n  ")}`,
+	);
+}
+console.log(`PASS: the CMS field bundle has no imports`);
+
+// Smoke check (ticket 07): the installed bundle registers the scripture field
+// and validates with the real parser. A separate process keeps its stub
+// globals out of this one.
+run(
+	"node",
+	[join(testsDir, "register-validator.mjs"), join(installed, BUNDLE)],
+	site,
+);
 
 // 5. Check and build.
 run("pnpm", ["exec", "astro", "check"], site);

@@ -36,7 +36,7 @@ Useful references: `docs/research/integration-capabilities.md` and the July spik
 
 One spec per area. Each area lists the items its spec must settle. `R-1 #2` means item 2 under "Carried into the spec" in that spike's note.
 
-1. **Package skeleton and publishing:** spec written 2026-11-03 (`.scratch/package-skeleton/spec.md`, ADR-0005: the package ships its source). Its carried-items table records each outcome; R-1 #1, #5 and R-2 #7 are no longer needed. Tickets 01–08 written 2026-11-03, plus 09 (the no-globals tests on Vitest) after 06; 01–06 and 09 resolved. Unblocked next: 07.
+1. **Package skeleton and publishing:** spec written 2026-11-03 (`.scratch/package-skeleton/spec.md`, ADR-0005: the package ships its source). Its carried-items table records each outcome; R-1 #1, #5 and R-2 #7 are no longer needed. Tickets 01–08 written 2026-11-03, plus 09 (the no-globals tests on Vitest) after 06; 01–07 and 09 resolved. Unblocked next: 08.
    Original scope: `exports`, `files`, how `.astro`/CSS/client scripts ship (a tsdown copy step or raw source), Tailwind `@source`, and the `#/` alias moving to package.json `imports`.
    - Carried: R-1 #1, #5, #6; R-2 #5, #7, #8; R-3 #2, #4, #5, #9. Also: the packed package (R-3 leftover), the dev loop and `pnpm dev`'s watcher (R-4), and `pnpm verify`.
 2. **Integration core:** the options schema (`cms.repo`, `customCss`), route injection, bundled integrations (`astro-icon`, sitemap, Tailwind), `env.schema` and fonts, and env checks for enabled Features (replacing `verifyRequiredEnvVars`).
@@ -46,7 +46,7 @@ One spec per area. Each area lists the items its spec must settle. `R-1 #2` mean
 4. **Feature migration**, one Feature at a time: sermons, blog, calendar, team, pages, homepage and layout, subscribe and giving.
    - Carried: R-2 #1, #3. Also: the real subscribe action (R-2 leftover). From 3.1 ticket 06: the Site half of its AC 7 (the Site's `astro check` sees `scriptureParsing` once an exported module imports it, with no TS7016), and three inherited `expandRange` bugs kept for parity (multi-chapter ranges expand only the first chapter, ranges across books give `[]`, comma lists come back unsplit) for a post-MVP decision. From 3.1 ticket 04: the probe that a `server` missing a Theme action fails `satisfies ThemeActions`; `serverWithSiteAction` starts to bite once `server` has an action; closing `ThemeActions` or narrowing its `unknown` index signature is breaking.
 5. **CMS serving:** the admin page, the config endpoints, the scripture widget, and the validator built by the package.
-   - Carried: R-3 #1, #3, #6, #8.
+   - Carried: R-3 #1, #3, #6, #8. Also, from 3.1 ticket 07: the scripture field's `isValid` throws on `undefined` or `null` (inherited from `sojourners.church`, kept for parity); check what Sveltia passes for an empty field, and whether `sveltia.d.ts` should type the value as `unknown`.
 6. **Customization:** the editor's `customCss` (recommended: inline it from `config:theme`) and the developer stylesheet option.
 7. **Starter Site and CI:** generic sample content, the Netlify setup, the packed-tarball build and the smoke checks (PRD §8a).
    - Carried: R-3 #10. Also: a Netlify build (R-2 and R-3 leftovers), replacing the Starter Site's interim `@astrojs/node` adapter, and whether sessions (which `@astrojs/node` turns on with filesystem storage) stay on (3.1 ticket 04).
