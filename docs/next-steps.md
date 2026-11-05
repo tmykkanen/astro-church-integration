@@ -39,7 +39,8 @@ One spec per area. Each area lists the items its spec must settle. `R-1 #2` mean
 1. **Package skeleton and publishing:** spec written 2026-11-03 (`.scratch/package-skeleton/spec.md`, ADR-0005: the package ships its source). Its carried-items table records each outcome; R-1 #1, #5 and R-2 #7 are no longer needed. Tickets 01–08 written 2026-11-03, plus 09 (the no-globals tests on Vitest) after 06; all resolved. **Done 2026-11-05**; the spec retro was skipped.
    Original scope: `exports`, `files`, how `.astro`/CSS/client scripts ship (a tsdown copy step or raw source), Tailwind `@source`, and the `#/` alias moving to package.json `imports`.
    - Carried: R-1 #1, #5, #6; R-2 #5, #7, #8; R-3 #2, #4, #5, #9. Also: the packed package (R-3 leftover), the dev loop and `pnpm dev`'s watcher (R-4), and `pnpm verify`.
-2. **Integration core:** the options schema (`cms.repo`, `customCss`), route injection, bundled integrations (`astro-icon`, sitemap, Tailwind), `env.schema` and fonts, and env checks for enabled Features (replacing `verifyRequiredEnvVars`).
+2. **Integration core:** spec written 2026-11-05 (`.scratch/integration-core/spec.md`); tickets 01–06 written 2026-11-05. R-1 #2 is split: the version field in `env.schema` lands here, and its smoke check stays in 3.3.
+   Original scope: the options schema (`cms.repo`, `customCss`), route injection, bundled integrations (`astro-icon`, sitemap, Tailwind), `env.schema` and fonts, and env checks for enabled Features (replacing `verifyRequiredEnvVars`).
    - Carried: R-2 #4 (now under 3.1's rule of no ambient globals in shipped `src/`), #6; R-3 #7. Also: a missing secret at build time (R-2 leftover), and which stylesheet owns `@import "tailwindcss"` so a page never loads Tailwind's base styles twice (NFR-3; from 3.1 ticket 03).
 3. **Content contract:** collections and schemas move into the package, and the public-contract rules (PRD §9) are written down.
    - Carried: R-1 #2, #3, #4; R-2 #2. Also:
@@ -50,6 +51,7 @@ One spec per area. Each area lists the items its spec must settle. `R-1 #2` mean
 4. **Feature migration**, one Feature at a time: sermons, blog, calendar, team, pages, homepage and layout, subscribe and giving.
    - Carried: R-2 #1, #3. Also:
      - The real subscribe action (R-2 leftover).
+     - From 3.2: wire `requireEnv` into the calendar and subscribe, and test end to end that an enabled Feature with a missing variable fails the build (FR-14). Render `<Font />` in the layout.
      - From 3.1 ticket 06: the Site half of its AC 7 (the Site's `astro check` sees `scriptureParsing` once an exported module imports it, with no TS7016).
      - From 3.1 ticket 06: three inherited `expandRange` bugs kept for parity, for a post-MVP decision. Multi-chapter ranges expand only the first chapter, ranges across books give `[]`, and comma lists come back unsplit.
      - From 3.1 ticket 04: the probe that a `server` missing a Theme action fails `satisfies ThemeActions`; `serverWithSiteAction` starts to bite once `server` has an action; closing `ThemeActions` or narrowing its `unknown` index signature is breaking.
