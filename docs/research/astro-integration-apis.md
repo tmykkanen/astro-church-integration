@@ -68,4 +68,4 @@ Primary source: https://docs.astro.build/en/reference/integrations-reference/ un
 - Vite doesn't watch `node_modules` (symlinked workspace packages are fine).
 - Tailwind v4 needs `@source` for theme files in `node_modules`.
 - Vite-internal plugins must be retested on Vite 8.
-- Unverified: whether integrations can set `fonts` / `env.schema` through `updateConfig`.
+- Unverified: whether integrations can set `env.schema` through `updateConfig`. Setting `fonts` that way works: run on Astro 7.3.5 on 2026-11-09 (spec 3.2, ticket 02). See `integration-capabilities.md`.

@@ -1,29 +1,6 @@
-import type { HookParameters } from "astro";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
-import { integration } from "#/integration.ts";
-import type { AstroChurchOptions } from "#/options.ts";
-
-const setupParams = ({ site }: { site: string }) => {
-	return {
-		config: { site },
-		injectRoute: vi.fn(),
-	} as unknown as HookParameters<"astro:config:setup">;
-};
-
-const runSetup = async ({
-	options,
-	params,
-}: {
-	options: unknown;
-	params: HookParameters<"astro:config:setup">;
-}) => {
-	const hook = integration(options as AstroChurchOptions).hooks[
-		"astro:config:setup"
-	];
-	if (!hook) throw new Error("astro:config:setup hook missing");
-	return hook(params);
-};
+import { runSetup, setupParams } from "./setup.ts";
 
 describe("integration options", () => {
 	const validOptions = { cms: { repo: "example/grace-church" } };

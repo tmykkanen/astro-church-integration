@@ -6,7 +6,9 @@
 // (including the type probe in `fixtures/`, ticket 04) and `astro build`,
 // and the smoke checks: the route renders, its page loads the Theme-only and
 // Site-content Tailwind classes and the route's client script (ticket 03),
-// and every shipped module imports.
+// its CSS sets the Theme's font and the font files it preloads are built
+// (ticket 02, spec 3.2), and every shipped module imports. Ticket numbers
+// without a spec are spec 3.1's.
 //
 // Run from anywhere: node packages/astro-church/tests/packed/harness.mjs
 // Exits 0 when every check passes, 1 on the first failure. On failure the
@@ -43,6 +45,11 @@ const CONTENT_CLASS = "decoration-dotted";
 // literals the script uses, so finding it in the JS the page loads shows the
 // script shipped.
 const SCRIPT_MARKER = "astro-church:skeleton-script";
+
+// The Theme's font (ticket 02, spec 3.2): the CSS variable the integration
+// registers it under, and its family name.
+const FONT_VARIABLE = "--font-sans";
+const FONT_FAMILY = "Poppins";
 
 // The CMS field's browser bundle (ticket 07), built from
 // `client/scriptureField.ts`. The path is relative to the package root.
@@ -300,6 +307,44 @@ if (!routeJs.includes(SCRIPT_MARKER)) {
 	);
 }
 console.log(`PASS: the ${ROUTE} page ships the route's client script`);
+
+// Smoke check (ticket 02, spec 3.2): the route's CSS sets the font variable to
+// the Theme's font. Astro's <Font /> declares it with a hashed family name,
+// such as `--font-sans:Poppins-82fd…,"Poppins-82fd… fallback: Arial",…`.
+// Tailwind's theme can declare --font-sans too (a system font stack), so the
+// check needs the family in the value, not just the variable.
+if (!new RegExp(`${FONT_VARIABLE}\\s*:[^;}]*${FONT_FAMILY}`).test(routeCss)) {
+	fail(
+		`the ${ROUTE} page's CSS doesn't set ${FONT_VARIABLE} to ${FONT_FAMILY}`,
+	);
+}
+console.log(
+	`PASS: the ${ROUTE} page's CSS sets ${FONT_VARIABLE} to ${FONT_FAMILY}`,
+);
+
+// Smoke check (ticket 02, spec 3.2): the font files the route preloads are in
+// the build. Astro emits the configured font's files whether or not a page
+// renders <Font />, so "the build has font files" passes before the route
+// renders anything. This check ties the files to the route: <Font preload />
+// adds a <link rel="preload" as="font"> per file, and each must be built.
+const fontUrls = [...pageHtml.matchAll(/<link\b[^>]*\brel="preload"[^>]*>/g)]
+	.map(([tag]) => tag)
+	.filter((tag) => /\bas="font"/.test(tag))
+	.map((tag) => tag.match(/\bhref="([^"]+)"/)?.[1]);
+if (fontUrls.length === 0) {
+	fail(`the ${ROUTE} page preloads no font files`);
+}
+const missingFonts = fontUrls.filter(
+	(url) => !url || !existsSync(join(client, url)),
+);
+if (missingFonts.length > 0) {
+	fail(
+		`the ${ROUTE} page preloads font files that aren't built:\n  ${missingFonts.join("\n  ")}`,
+	);
+}
+console.log(
+	`PASS: the ${fontUrls.length} font files the ${ROUTE} page preloads are built`,
+);
 
 cpSync(join(testsDir, "import-modules.mjs"), join(site, "import-modules.mjs"));
 run("node", ["import-modules.mjs"], site);

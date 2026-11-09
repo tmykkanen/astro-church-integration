@@ -81,7 +81,7 @@ Feature env checks move from a pre-config script into the Features themselves, t
 
 ### Fonts (Q10)
 - Poppins (Google provider, `--font-sans`, latin subset) is added through `updateConfig({ fonts })`. There's no option to change it.
-- **Risk (ticket 02):** the research note marks "integrations can set `fonts` through `updateConfig`" as unverified. The ticket checks it first.
+- **Risk (ticket 02):** the research note marks "integrations can set `fonts` through `updateConfig`" as unverified. The ticket checks it first. *Checked 2026-11-09: it works on Astro 7.3.5 (see ticket 02's Comments).*
 - Rendering the font (the `<Font />` component in the layout) belongs to spec 3.4. Until then, the skeleton route renders it so the harness can check it.
 
 ### Env (Q5, Q7, Q8, Q9)
@@ -119,7 +119,7 @@ Good tests here check what a Site Developer or a built Site can observe: the con
 3. **The packed-install harness** (extends 3.1's, in CI):
    - `/robots.txt` exists and its `Sitemap:` line points at `sitemap-index.xml` under the Starter Site's `site`
    - `sitemap-index.xml` exists
-   - the skeleton route's CSS sets `--font-sans` and the font files are emitted
+   - the skeleton route's CSS sets `--font-sans` to Poppins, and the font files the route preloads are emitted. (Ticket 02 changed this from "the font files are emitted": Astro emits a configured font's files whether or not a page renders `<Font />`.)
    - Tailwind's preflight appears exactly once in the skeleton route's CSS
    - the skeleton route's `astro-icon` icon renders
 4. **The type probe** (extends 3.1's): a wrong option type passed to the integration in `fixtures/type-probe.ts` fails `astro check` (under `@ts-expect-error`), and `AstroChurchOptions` isn't `any`. Ticket 01 put these probes in the existing probe file rather than a separate probe `astro.config`: same types, one file for the harness to copy.

@@ -1,11 +1,21 @@
 ---
 import "#/styles/global.css";
+
+import { Font } from "astro:assets";
+
 import Skeleton from "#/components/Skeleton.astro";
 ---
 
-<Skeleton />
-<p class="decoration-wavy underline">Wavy</p>
+<!doctype html>
+<html lang="en">
+	<head>
+		<Font cssVariable="--font-sans" preload />
+	</head>
 
-<script>
-console.log("astro-church:skeleton-script");
-</script>
+	<Skeleton />
+	<p class="decoration-wavy underline">Wavy</p>
+
+	<script>
+	console.log("astro-church:skeleton-script");
+	</script>
+</html>

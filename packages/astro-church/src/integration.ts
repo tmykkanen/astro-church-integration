@@ -1,4 +1,5 @@
 import type { AstroIntegration } from "astro";
+import { fontProviders } from "astro/config";
 import { AstroError } from "astro/errors";
 import { z } from "astro/zod";
 
@@ -11,7 +12,7 @@ export function integration(options: AstroChurchOptions): AstroIntegration {
 	return {
 		name: "astro-church",
 		hooks: {
-			"astro:config:setup": ({ injectRoute, config }) => {
+			"astro:config:setup": ({ updateConfig, injectRoute, config }) => {
 				const parsedOptions = astroChurchOptionsSchema.safeParse(options);
 
 				if (!parsedOptions.success) {
@@ -29,6 +30,17 @@ export function integration(options: AstroChurchOptions): AstroIntegration {
 						"Set site in astro.config.mjs, e.g. https://example.church",
 					);
 				}
+
+				updateConfig({
+					fonts: [
+						{
+							provider: fontProviders.google(),
+							name: "Poppins",
+							cssVariable: "--font-sans",
+							subsets: ["latin"],
+						},
+					],
+				});
 
 				injectRoute({
 					pattern: "/theme-skeleton",

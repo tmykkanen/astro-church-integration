@@ -21,6 +21,12 @@ Astro passes a dependency through Vite when that dependency's package.json has `
 - The `fonts` arrays are concatenated.
 - If an entry has the same `cssVariable` as another but a different family or provider, the last one wins and a warning is printed. The integration's entries come after the Site's, so they win.
 - Verified in source.
+- **Verified by running it (Astro 7.3.5, 2026-11-09, spec 3.2 ticket 02):** a throwaway project whose Site config has no `fonts`, plus a local integration that calls `updateConfig({ fonts: [Poppins, Google, --font-sans, latin] })` and injects a route that renders `<Font cssVariable="--font-sans" />`.
+  - `config.fonts` in `astro:config:done` holds the entry. The injected route sets `--font-sans`, with an `@font-face` and preload links. The build emits two `.woff2` files (Poppins 400 normal and italic, Astro's default when no weights are given). `astro dev` serves the font (`200 font/woff2`).
+  - When the Site declares the identical entry, there's no warning: the two entries are merged and still emit two files.
+  - When the Site declares a different family on `--font-sans`, Astro prints the warning, the integration's Poppins wins, and the Site's font files are emitted as well (four files).
+  - `fontProviders` imported from `astro/config` worked in a module outside the Site's `src/`, and from inside the published package: `pnpm test:packed` builds the packed Starter Site with it (ticket 02).
+  - Astro emits a configured font's files whether or not any page renders `<Font />`. A check that the build has font files doesn't show a page uses them; check the files a page preloads instead.
 
 ## Injected endpoints for the CMS: yes
 - `injectRoute` accepts `.ts` endpoints from a package (a package export or a `URL`).
