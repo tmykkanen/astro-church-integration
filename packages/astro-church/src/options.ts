@@ -1,3 +1,4 @@
+import { AstroError } from "astro/errors";
 import { z } from "astro/zod";
 
 const ERROR_CMS_REPO = "cms.repo is required, in the form owner/name";
@@ -33,3 +34,18 @@ export const astroChurchOptionsSchema = z.strictObject(
 );
 
 export type AstroChurchOptions = z.input<typeof astroChurchOptionsSchema>;
+
+export const validateOptions = (options: unknown) => {
+	const parsed = astroChurchOptionsSchema.safeParse(options);
+
+	if (!parsed.success) {
+		const message = z.prettifyError(parsed.error);
+
+		throw new AstroError(
+			`Invalid astro-church options:\n${message}`,
+			"Pass astroChurch({ cms: { repo: 'owner/name' } }) in astro.config.mjs",
+		);
+	}
+
+	return parsed.data;
+};
