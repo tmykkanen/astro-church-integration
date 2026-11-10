@@ -91,6 +91,8 @@ It reports findings with proposed fixes and changes nothing. Tyler decides what 
 
 Tyler fixes, commits and fast-forwards `main` (history stays linear). A user-visible change gets a changeset (`pnpm changeset`). At the end of each spec: doc updates.
 
+At the end of every ticket, fast-forward `main` to the ticket branch first. Then create the next ticket's branch from the updated `main`, never from the previous ticket branch.
+
 ### Which doc to update
 
 | What implementation taught us | Update |
