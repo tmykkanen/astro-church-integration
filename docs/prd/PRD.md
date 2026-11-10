@@ -45,7 +45,7 @@ The original Astro Theme Provider tried to solve this in general. It has been un
 ### Integration and packaging
 - **FR-1** The package `astro-church` default-exports an Astro integration function. A Site enables the Theme by adding it to `integrations`.
 - **FR-2** The integration injects all Theme routes: the homepage, every Feature route, Markdown pages, `robots.txt`, and the CMS. Each Feature route produces pages only when its Feature is enabled in content (ADR-0003).
-- **FR-3** The integration adds what the Theme's own code needs: `astro-icon`, sitemap, the Tailwind Vite plugin, fonts and `env.schema`. It reuses any of these the Site already added. Only `astro` is a peer dependency.
+- **FR-3** The integration adds what the Theme's own code needs: sitemap, the Tailwind Vite plugin, fonts and `env.schema`. It reuses any of these the Site already added. The Theme renders its icons from its own dependencies, so a Site installs and configures no icon integration or icon set. Only `astro` is a peer dependency.
 - **FR-4** All Theme pages are prerendered. Only Actions run on demand.
 - **FR-5** The package exports `collections` from `astro-church/content` and `server` from `astro-church/actions`, and a Site re-exports each with one line (ADR-0004). A Site can extend or override individual collections by spreading and replacing keys.
 - **FR-6** Tailwind generates the classes used both in the Theme's own files (which sit inside `node_modules`) and in the Site's content.
@@ -188,6 +188,7 @@ The original Astro Theme Provider tried to solve this in general. It has been un
 | Starter Site through `create-astro`, which doubles as the playground; `astro add` documented | Discovery Q7 |
 | MVP audience is Sojourners; success criteria in §11 | Discovery Q8 |
 | The Theme brings its own integrations | Discovery Q9 |
+| The Theme drops `astro-icon` (it can't find the Theme's icon sets under pnpm) and reads `@iconify-json/simple-icons` directly; an unknown icon name fails the build | Spec 3.2 ticket 04 (2026-11-09), `docs/research/icons-from-the-theme.md` |
 | Requires an adapter, prerenders its pages, tested on Netlify | Discovery Q10 |
 | 0.x versioning with a defined public contract | Discovery Q11 |
 | Strict parity, Theme-code freeze, cutover on a branch, local content snapshot | Discovery Q12 |

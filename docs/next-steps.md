@@ -52,6 +52,7 @@ One spec per area. Each area lists the items its spec must settle. `R-1 #2` mean
    - Carried: R-2 #1, #3. Also:
      - The real subscribe action (R-2 leftover).
      - From 3.2: wire `requireEnv` into the calendar and subscribe, and test end to end that an enabled Feature with a missing variable fails the build (FR-14). Render `<Font />` in the layout.
+     - From 3.2 ticket 04: `SocialButton` uses the Theme's social icon component in place of `astro-icon`'s `<Icon>`, and the harness's icon check moves from the skeleton route to the footer. Lucide icons come from `@lucide/astro`, added to the package's `dependencies` with the first component that uses one.
      - From 3.1 ticket 06: the Site half of its AC 7 (the Site's `astro check` sees `scriptureParsing` once an exported module imports it, with no TS7016).
      - From 3.1 ticket 06: three inherited `expandRange` bugs kept for parity, for a post-MVP decision. Multi-chapter ranges expand only the first chapter, ranges across books give `[]`, and comma lists come back unsplit.
      - From 3.1 ticket 04: the probe that a `server` missing a Theme action fails `satisfies ThemeActions`; `serverWithSiteAction` starts to bite once `server` has an action; closing `ThemeActions` or narrowing its `unknown` index signature is breaking.

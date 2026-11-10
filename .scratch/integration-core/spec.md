@@ -8,7 +8,7 @@
 ## Problem Statement
 
 The `astro-church` integration injects only the walking skeleton's route. Everything else the Theme needs from a Site's `astro.config` is still written by hand in each Site:
-- the Tailwind Vite plugin, `astro-icon` and sitemap
+- the Tailwind Vite plugin, `astro-icon` and sitemap (plus the `@iconify-json/*` sets in the Site's own `package.json`, which is where `astro-icon` looks for them)
 - the Poppins font
 - the `env.schema` for the Theme's variables
 - a pre-config script (`verifyRequiredEnvVars`) that parses content YAML to fail the build when an enabled Feature's variable is missing
@@ -20,7 +20,8 @@ The integration takes no options, so a Site has no typed, validated place to giv
 The integration becomes the single place where the Theme configures Astro:
 - It validates its options when dev or build starts, and gives errors that name the option.
 - It requires `site`.
-- It adds the integrations, Vite plugin, font and env fields the Theme's own code needs, reusing any the Site already added.
+- It adds the sitemap integration, Vite plugin, font and env fields the Theme's own code needs, reusing any the Site already added.
+- The Theme renders its icons itself, from its own dependencies, so a Site has no icon integration or icon set to install.
 - It owns a route table, in which every injected route is prerendered. `robots.txt` is the first real route.
 
 Feature env checks move from a pre-config script into the Features themselves, through a shared helper. A Site's `astro.config` shrinks to `astroChurch({ cms: { repo } })`, its adapter and its `site`. The Starter Site drops the Tailwind wiring and pages that predate the Theme.
@@ -34,8 +35,8 @@ Feature env checks move from a pre-config script into the Features themselves, t
 5. As a Site Developer, I want autocomplete and type errors for the integration's options in `astro.config`, so that mistakes show up in my editor (DX-3).
 6. As a Site Developer, I want to import an `AstroChurchOptions` type, so that I can build the options in a separate variable or file with full types.
 7. As a Site Developer, I want to declare `customCss` stylesheets in the options now, so that the option's shape is settled before its behaviour arrives in spec 3.6.
-8. As a Site Developer, I want the Theme to add `astro-icon`, sitemap and the Tailwind Vite plugin itself, so that I don't install or configure them (FR-3).
-9. As a Site Developer who already uses sitemap or `astro-icon` with my own options, I want the Theme to keep my copy rather than add a second one, so that my configuration wins and nothing runs twice.
+8. As a Site Developer, I want the Theme to add sitemap and the Tailwind Vite plugin itself, and to render its icons without any icon integration or icon set from me, so that I don't install or configure them (FR-3).
+9. As a Site Developer who already uses sitemap with my own options, I want the Theme to keep my copy rather than add a second one, so that my configuration wins and nothing runs twice.
 10. As a Site Developer who already adds the Tailwind Vite plugin, I want the Theme not to add another, so that the build isn't slowed or broken by two Tailwind plugins.
 11. As a Site Developer, I want only `astro` (and TypeScript, NFR-1) as peer dependencies, so that one `npm install astro-church` brings everything else.
 12. As a visitor, I want Tailwind's base styles loaded once per page, so that pages ship no extra CSS (NFR-3).
@@ -55,8 +56,9 @@ Feature env checks move from a pre-config script into the Features themselves, t
 26. As the Theme Author, I want a test that fails when the package's dev-only `astro:env` declaration drifts from the integration's `env.schema`, so that the typecheck never lies about the variables.
 27. As the Theme Author, I want the integration's setup tested by calling its hook directly, so that option errors, reuse detection and config updates are checked in milliseconds without building a Site.
 28. As the Theme Author, I want the packed-install harness to check robots, the sitemap, the font and a single copy of Tailwind's base styles, so that a published package does what the source does.
-29. As the Theme Author, I want an icon to render through `astro-icon` in a packed pnpm install, so that I know the Theme's icon sets resolve when they sit in the Theme's dependencies, not the Site's.
+29. As the Theme Author, I want a social icon to render from the Theme's own `@iconify-json/simple-icons` in a packed pnpm install, so that I know the icon set resolves from the Theme's dependencies, not the Site's.
 30. As the Theme Author, I want the Starter Site stripped of its pre-Theme pages, layout, stylesheet and Tailwind plugin, so that it shows the real minimum a Site needs.
+31. As a Site Developer, I want a social icon name that isn't in the icon set to fail the build with a message naming it, so that a typo doesn't ship as a missing icon.
 
 ## Implementation Decisions
 
@@ -69,11 +71,19 @@ Feature env checks move from a pre-config script into the Features themselves, t
 - **`site` is required:** when `config.site` is unset, `astro:config:setup` fails with a message naming `site` (Q11).
 
 ### Bundled integrations and the Tailwind plugin (Q3, Q14)
-- `astro-icon` and `@astrojs/sitemap` are added through `updateConfig({ integrations })`, each only when `config.integrations` has no entry with that integration's name. The Site's copy and its options win, and the Theme passes no options to either.
+- `@astrojs/sitemap` is added through `updateConfig({ integrations })`, only when `config.integrations` has no entry with its name. The Site's copy and its options win, and the Theme passes no options.
 - `@tailwindcss/vite` is added through `updateConfig({ vite: { plugins } })` only when no plugin in `config.vite.plugins` has a name starting with `@tailwindcss/vite`.
-- These packages, plus `tailwindcss` and the `@iconify-json/*` sets the Theme uses, go in `dependencies`. Only `astro` and `typescript` are peers.
-- **Risk (ticket 03):** `astro-icon` looks up icon sets from the project root, so in a packed pnpm install the Theme's sets may not resolve. The check comes first. The skeleton route renders one icon so the harness keeps checking it. If resolution fails, the ticket decides the fallback (icon sets as peers, or inline SVGs) and records it here.
-- **README:** a Site that brings its own `astro-icon` must keep the Theme's icon sets included.
+- These packages, plus `tailwindcss` and the icon packages below, go in `dependencies`. Only `astro` and `typescript` are peers.
+
+### Icons (ticket 04, decided 2026-11-09)
+- **Risk checked, failed:** `astro-icon` finds icon sets only through the Site's `package.json` and resolves them from the Site's folder, so it can't use the Theme's sets under pnpm. `astro-iconset`, Iconify's on-demand components and the `simple-icons` package were checked too. Evidence and comparison: `docs/research/icons-from-the-theme.md`.
+- **The Theme doesn't use or add `astro-icon`.** A Site that uses `astro-icon` for its own icons keeps adding it itself.
+- **Social icons:** a Theme component renders a `simple-icons` icon by name from `@iconify-json/simple-icons`, imported from the Theme's own dependencies and turned into an `<svg>` at build time with `@iconify/utils`. The names are the ones `astro-icon` accepted (`simple-icons:<name>`), so existing `socials[].icon` content keeps working. The markup matches what `astro-icon` rendered closely enough that `sojourners.church`'s styles still apply.
+- **Unknown name:** the component throws an error naming the icon and pointing at https://simpleicons.org/. A prerendered page fails the build (parity: `astro-icon` throws too).
+- **Bundling:** importing `icons.json` (4.6 MB) puts the set in the server build; reading it from disk at build time doesn't. Either ships no client JS. The ticket picks one and records it.
+- **Lucide icons** keep coming from `@lucide/astro`, an ordinary import. They move with their components in 3.4; `@iconify-json/lucide` isn't needed.
+- **Public contract:** the accepted icon names are content a Site writes (PRD §9). A bump of `@iconify-json/simple-icons` that removes a name is breaking.
+- The skeleton route renders one social icon so the harness keeps checking it until 3.4 moves the check to the footer.
 
 ### Tailwind ownership (Q4, carried from 3.1 ticket 03)
 - The Theme's stylesheet is the only one that imports Tailwind. Site stylesheets (FR-19, 3.6) never import it; they use `@reference` when they need the Theme's utilities or theme.
@@ -107,7 +117,7 @@ Good tests here check what a Site Developer or a built Site can observe: the con
 **Seams (approved, Q13):**
 1. **The integration's `astro:config:setup` hook, under Vitest.** Tests call the hook with a hand-built params object: a fake `config` (`site`, `integrations`, `vite.plugins`), and recording `updateConfig` and `injectRoute` functions, plus `command` and `logger`. They cover:
    - option errors naming `cms.repo`, a bad `customCss` and a missing `site`
-   - the integrations and Tailwind plugin added, or left out when the Site already has them
+   - sitemap and the Tailwind plugin added, or left out when the Site already has them
    - the four `env.schema` fields, all optional, plus the version field
    - the Poppins `fonts` entry
    - the route table: `/robots.txt` and the skeleton route, each prerendered
@@ -116,12 +126,13 @@ Good tests here check what a Site Developer or a built Site can observe: the con
 2. **Plain Vitest:**
    - the dev-only `astro:env` declaration matches the integration's `env.schema` (same names; optional fields typed `string | undefined`)
    - `requireEnv` returns the value when it's set, and throws a message naming the variable and the Feature when it isn't
+   - the social icon lookup returns an `<svg>` for a known name and throws a message naming an unknown one
 3. **The packed-install harness** (extends 3.1's, in CI):
    - `/robots.txt` exists and its `Sitemap:` line points at `sitemap-index.xml` under the Starter Site's `site`
    - `sitemap-index.xml` exists
    - the skeleton route's CSS sets `--font-sans` to Poppins, and the font files the route preloads are emitted. (Ticket 02 changed this from "the font files are emitted": Astro emits a configured font's files whether or not a page renders `<Font />`.)
    - Tailwind's preflight appears exactly once in the skeleton route's CSS
-   - the skeleton route's `astro-icon` icon renders
+   - the skeleton route's social icon renders as an inline `<svg>`
 4. **The type probe** (extends 3.1's): a wrong option type passed to the integration in `fixtures/type-probe.ts` fails `astro check` (under `@ts-expect-error`), and `AstroChurchOptions` isn't `any`. Ticket 01 put these probes in the existing probe file rather than a separate probe `astro.config`: same types, one file for the harness to copy.
 
 **Carried to 3.4:** the end-to-end case where a Feature is enabled, its variable is missing and the build fails. There is no Feature to drive it here.
@@ -133,11 +144,11 @@ Good tests here check what a Site Developer or a built Site can observe: the con
 - `tests/build/skeleton-route.mjs` (checking a built route's output).
 
 ## Tickets
-`issues/01`–`06`, approved 2026-11-05. Q15's bundled-integrations ticket was split into 03 (Tailwind) and 04 (`astro-icon` and sitemap).
+`issues/01`–`06`, approved 2026-11-05. Q15's bundled-integrations ticket was split into 03 (Tailwind) and 04 (icons and sitemap).
 1. **Options:** the schema, `cms.repo`, inert `customCss`, the `site` check, `AstroChurchOptions`, DX-2 errors. Creates the hook-test seam.
 2. **Fonts:** Poppins through `updateConfig`; the unverified API is checked first.
 3. **Tailwind:** the plugin with reuse detection, the Starter Site cleanup, the preflight-once check.
-4. **`astro-icon` and sitemap:** reuse detection; the pnpm icon-resolution risk is checked first.
+4. **Icons and sitemap:** sitemap reuse detection; social icons from the Theme's own `@iconify-json/simple-icons` (the `astro-icon` risk failed, see Icons).
 5. **Env:** the optional fields, the version field, the dev-only declaration and its sync test, `requireEnv`.
 6. **Route table and `robots.txt`.**
 
@@ -152,6 +163,7 @@ Ticket 01 comes first. Tickets 02–05 depend only on 01; 02 and 04 carry the un
 | Missing secret at build time (R-2 leftover) | Covered by `requireEnv` during prerender, plus a README note on Netlify scopes. The end-to-end test goes to 3.4. |
 | Who imports Tailwind (3.1 ticket 03) | The Theme's stylesheet only; Site stylesheets use `@reference`. |
 | R-1 #2 version in `env.schema` | Split: the field is added here; the cache-busting smoke check stays in 3.3. |
+| `astro-icon` with Theme-owned icon sets (ticket 04 risk) | Failed under pnpm. Replaced by reading `@iconify-json/simple-icons` directly; see Icons. |
 
 ## Out of Scope
 - Feature routes, the layout's `<Font />`, and wiring `requireEnv` into the calendar and subscribe (3.4).
@@ -165,4 +177,4 @@ Ticket 01 comes first. Tickets 02–05 depend only on 01; 02 and 04 carry the un
 ## Further Notes
 - No glossary changes and no ADR (Q16). "Integration options" is a technical term, not a domain term. Keeping env variables optional and checking them inside Features is recorded above with its reasoning, since it's cheap to reverse.
 - Changesets: tickets 01, 03, 04 and 05 change the public contract additively (options, `AstroChurchOptions`, env names, `/robots.txt`), so each needs a changeset.
-- The README gains: the options, env vars and their Netlify scope, the `@reference` rule for Site stylesheets, and the `astro-icon` include note (DX-4).
+- The README gains: the options, env vars and their Netlify scope, and the `@reference` rule for Site stylesheets (DX-4). The `astro-icon` include note was dropped with `astro-icon` (ticket 04).
