@@ -2,26 +2,6 @@
 	"name": "astro-church",
 	"version": "0.0.0",
 	"description": "Theme integration for astro church",
-	"type": "module",
-	"exports": {
-		".": "./src/index.ts",
-		"./content": "./src/content.ts",
-		"./actions": "./src/actions.ts"
-	},
-	"imports": {
-		"#/*": "./src/*"
-	},
-	"files": [
-		"src",
-		"dist"
-	],
-	"scripts": {
-		"dev": "tsdown --watch --no-clean",
-		"typecheck": "tsc --noEmit && tsc -p client && astro check --root tests/astro-check",
-		"test": "vitest run",
-		"build": "tsdown",
-		"prepack": "pnpm build"
-	},
 	"keywords": [
 		"astro-integration",
 		"astro-component",
@@ -29,27 +9,47 @@
 		"astro",
 		"church"
 	],
-	"author": "Tyler Mykkanen",
+	"homepage": "https://github.com/tmykkanen/astro-church-integration#readme",
+	"bugs": "https://github.com/tmykkanen/astro-church-integration/issues",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/tmykkanen/astro-church-integration.git"
 	},
-	"bugs": "https://github.com/tmykkanen/astro-church-integration/issues",
-	"homepage": "https://github.com/tmykkanen/astro-church-integration#readme",
 	"license": "MIT",
+	"author": "Tyler Mykkanen",
+	"type": "module",
+	"imports": {
+		"#/*": "./src/*"
+	},
+	"exports": {
+		".": "./src/index.ts",
+		"./content": "./src/content.ts",
+		"./actions": "./src/actions.ts"
+	},
+	"files": [
+		"src",
+		"dist"
+	],
+	"scripts": {
+		"build": "tsdown",
+		"dev": "tsdown --watch --no-clean",
+		"prepack": "pnpm build",
+		"test": "vitest run",
+		"typecheck": "tsc --noEmit && tsc -p client && astro check --root tests/astro-check"
+	},
 	"dependencies": {
 		"@types/bible-reference-formatter": "^1.0.3",
 		"bible-passage-reference-parser": "^4.0.0",
 		"bible-reference-formatter": "^1.0.1"
-	},
-	"peerDependencies": {
-		"astro": "^7.3.0",
-		"typescript": ">=6"
 	},
 	"devDependencies": {
 		"@astrojs/check": "0.9.10",
 		"tsdown": "^0.23.5",
 		"typescript": "6.0.3",
 		"vitest": "^4.1.12"
+	},
+	"peerDependencies": {
+		"astro": "^7.3.0",
+		"typescript": ">=6"
 	}
 }

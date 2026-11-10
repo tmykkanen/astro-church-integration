@@ -1,21 +1,17 @@
 {
 	"name": "root",
 	"private": true,
-	"packageManager": "pnpm@12.8.1",
-	"engines": {
-		"node": ">=22.12.0"
-	},
 	"scripts": {
-		"playground:dev": "pnpm --filter playground dev",
-		"dev": "pnpm --filter astro-church build && pnpm --stream --parallel --filter astro-church --filter playground dev",
 		"changeset": "changeset",
+		"check:globals": "node packages/astro-church/tests/checks/no-globals.mjs packages/astro-church/src",
+		"ci-publish": "changeset publish",
+		"ci-version": "changeset version && pnpm install --no-frozen-lockfile",
+		"dev": "pnpm --filter astro-church build && pnpm --stream --parallel --filter astro-church --filter playground dev",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write",
-		"check:globals": "node packages/astro-church/tests/checks/no-globals.mjs packages/astro-church/src",
-		"verify": "pnpm lint && pnpm --filter astro-church typecheck && pnpm check:globals && pnpm --filter astro-church test && pnpm --filter astro-church build && pnpm --filter playground exec astro check && node packages/astro-church/tests/build/skeleton-route.mjs",
+		"playground:dev": "pnpm --filter playground dev",
 		"test:packed": "node packages/astro-church/tests/packed/harness.mjs",
-		"ci-version": "changeset version && pnpm install --no-frozen-lockfile",
-		"ci-publish": "changeset publish"
+		"verify": "pnpm lint && pnpm --filter astro-church typecheck && pnpm check:globals && pnpm --filter astro-church test && pnpm --filter astro-church build && pnpm --filter playground exec astro check && node packages/astro-church/tests/build/skeleton-route.mjs"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.15",
@@ -23,5 +19,9 @@
 		"@changesets/cli": "3.0.3",
 		"lefthook": "2.2.2",
 		"typescript": "6.0.3"
+	},
+	"packageManager": "pnpm@12.8.1",
+	"engines": {
+		"node": ">=22.12.0"
 	}
 }
