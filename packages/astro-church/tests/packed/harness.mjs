@@ -7,7 +7,8 @@
 // and the smoke checks: the route renders, its page loads the Theme-only and
 // Site-content Tailwind classes and the route's client script (ticket 03),
 // its CSS sets the Theme's font and the font files it preloads are built
-// (ticket 02, spec 3.2), and every shipped module imports. Ticket numbers
+// (ticket 02, spec 3.2), its CSS has Tailwind's preflight exactly once
+// (ticket 03, spec 3.2), and every shipped module imports. Ticket numbers
 // without a spec are spec 3.1's.
 //
 // Run from anywhere: node packages/astro-church/tests/packed/harness.mjs
@@ -300,6 +301,25 @@ if (!hasClassRule(routeCss, CONTENT_CLASS)) {
 console.log(
 	`PASS: the ${ROUTE} page's CSS has the Site content class .${CONTENT_CLASS}`,
 );
+
+// Smoke check (ticket 03, spec 3.2): the route's CSS has Tailwind's preflight
+// exactly once, so a page never loads Tailwind's base styles twice (NFR-3).
+// Preflight's universal reset is the marker: one rule whose selectors include
+// `::backdrop` and that sets `box-sizing: border-box`. Tailwind's other
+// `::backdrop` rule (the `--tw-*` property defaults) sets no box-sizing.
+// The marker is tied to how Tailwind v4 writes preflight: if an upgrade
+// changes that, this check fails with a count of 0, never passes wrongly.
+const preflightCount = [
+	...routeCss.matchAll(
+		/[^{}]*::backdrop[^{}]*\{[^}]*box-sizing:\s*border-box/g,
+	),
+].length;
+if (preflightCount !== 1) {
+	fail(
+		`the ${ROUTE} page's CSS has Tailwind's preflight ${preflightCount} times (expected 1)`,
+	);
+}
+console.log(`PASS: the ${ROUTE} page's CSS has Tailwind's preflight once`);
 
 if (!routeJs.includes(SCRIPT_MARKER)) {
 	fail(

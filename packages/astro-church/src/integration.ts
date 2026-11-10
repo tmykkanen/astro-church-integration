@@ -1,3 +1,4 @@
+import tailwindcss from "@tailwindcss/vite";
 import type { AstroIntegration } from "astro";
 import { fontProviders } from "astro/config";
 import { AstroError } from "astro/errors";
@@ -41,6 +42,26 @@ export function integration(options: AstroChurchOptions): AstroIntegration {
 						},
 					],
 				});
+
+				const sitePlugins: unknown[] = config.vite.plugins ?? [];
+				const siteHasTailwind = sitePlugins
+					.flat(Number.POSITIVE_INFINITY)
+					.some(
+						(plugin) =>
+							typeof plugin === "object" &&
+							plugin !== null &&
+							"name" in plugin &&
+							typeof plugin.name === "string" &&
+							plugin.name.startsWith("@tailwindcss/vite"),
+					);
+
+				if (!siteHasTailwind) {
+					updateConfig({
+						vite: {
+							plugins: [tailwindcss()],
+						},
+					});
+				}
 
 				injectRoute({
 					pattern: "/theme-skeleton",

@@ -21,18 +21,17 @@ Inside of your Astro project, you'll see the following folders and files:
 ├── public/
 │   └── favicon.svg
 ├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
+│   ├── actions/
+│   │   └── index.ts
+│   ├── content/
+│   │   └── test.md
+│   ├── content.config.ts
+│   └── env.d.ts
+├── astro.config.mjs
 └── package.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+This Site has no pages, layouts, components or stylesheets of its own: the `astro-church` Theme injects its routes and brings Tailwind. `src/content.config.ts` and `src/actions/index.ts` re-export the Theme's collections and Actions `server`. `src/content/test.md` is sample content that proves Tailwind scans the Site.
 
 Any static assets, like images, can be placed in the `public/` directory.
 

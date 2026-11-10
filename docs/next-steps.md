@@ -59,6 +59,7 @@ One spec per area. Each area lists the items its spec must settle. `R-1 #2` mean
 5. **CMS serving:** the admin page, the config endpoints, the scripture widget, and the validator built by the package.
    - Carried: R-3 #1, #3, #6, #8. Also, from 3.1 ticket 07: the scripture field's `isValid` throws on `undefined` or `null` (inherited from `sojourners.church`, kept for parity); check what Sveltia passes for an empty field, and whether `sveltia.d.ts` should type the value as `unknown`.
 6. **Customization:** the editor's `customCss` (recommended: inline it from `config:theme`) and the developer stylesheet option.
+   - From 3.2 ticket 03: what a Site stylesheet `@reference`s, and how it resolves. A Site no longer depends on `tailwindcss`, so under pnpm `@reference "tailwindcss"` from the Site likely won't resolve, and the Theme's stylesheet isn't in `exports`. The README defers the `@reference` instructions to this spec.
 7. **Starter Site and CI:** generic sample content, the Netlify setup, the packed-tarball build and the smoke checks (PRD §8a).
    - Carried: R-3 #10. Also: a Netlify build (R-2 and R-3 leftovers), replacing the Starter Site's interim `@astrojs/node` adapter, and whether sessions (which `@astrojs/node` turns on with filesystem storage) stay on (3.1 ticket 04).
 8. **Sojourners cutover plan:** a branch with a deploy preview, the URL-parity check, and the local content snapshot.

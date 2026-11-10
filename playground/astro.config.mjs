@@ -1,5 +1,4 @@
 import node from "@astrojs/node";
-import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import astroChurch from "astro-church";
 
@@ -9,9 +8,6 @@ export default defineConfig({
 	integrations: [
 		astroChurch({ cms: { repo: "tmykkanen/astro-church-integration" } }),
 	],
-	vite: {
-		plugins: [tailwindcss()],
-	},
 	adapter: node({
 		mode: "standalone",
 	}),

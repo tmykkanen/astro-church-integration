@@ -43,6 +43,12 @@ import type { AstroChurchOptions } from "astro-church";
 const options: AstroChurchOptions = { cms: { repo: "owner/name" } };
 ```
 
+## Styling
+
+The Theme brings Tailwind. Your Site doesn't install `tailwindcss` or add the `@tailwindcss/vite` plugin. If your Site already adds the plugin, the Theme detects it and doesn't add a second copy.
+
+Only the Theme's stylesheet imports Tailwind, so each page loads Tailwind's base styles once. Your Site's own stylesheets must never import Tailwind (no `@import "tailwindcss"`), or each page loads those base styles twice. Support for Site stylesheets, including how one uses `@reference` to reach Tailwind's utilities and the Theme's theme without adding CSS, comes in a later release.
+
 ## Contributing
 
 This package lives in a monorepo:

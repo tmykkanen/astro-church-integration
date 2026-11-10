@@ -38,9 +38,11 @@
 		"typecheck": "tsc --noEmit && tsc -p client && astro check --root tests/astro-check"
 	},
 	"dependencies": {
+		"@tailwindcss/vite": "^4.3.3",
 		"@types/bible-reference-formatter": "^1.0.3",
 		"bible-passage-reference-parser": "^4.0.0",
-		"bible-reference-formatter": "^1.0.1"
+		"bible-reference-formatter": "^1.0.1",
+		"tailwindcss": "^4.3.3"
 	},
 	"devDependencies": {
 		"@astrojs/check": "0.9.10",
