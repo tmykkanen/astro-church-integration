@@ -49,6 +49,14 @@ The Theme brings Tailwind. Your Site doesn't install `tailwindcss` or add the `@
 
 Only the Theme's stylesheet imports Tailwind, so each page loads Tailwind's base styles once. Your Site's own stylesheets must never import Tailwind (no `@import "tailwindcss"`), or each page loads those base styles twice. Support for Site stylesheets, including how one uses `@reference` to reach Tailwind's utilities and the Theme's theme without adding CSS, comes in a later release.
 
+## Sitemap
+
+The Theme adds `@astrojs/sitemap`, so the build writes `sitemap-index.xml` for your Site's pages under its `site` URL. Your Site doesn't install or configure it. If your Site already adds `@astrojs/sitemap`, for example to pass its own options, the Theme detects it and uses your copy instead of adding a second one.
+
+## Icons
+
+The Theme draws its icons from its own dependencies. Your Site doesn't install `astro-icon` or any `@iconify-json/*` icon set for the Theme. Your Site can still add `astro-icon` for icons of its own.
+
 ## Contributing
 
 This package lives in a monorepo:

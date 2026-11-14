@@ -1,3 +1,4 @@
+import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import type { AstroConfig, AstroIntegration, HookParameters } from "astro";
 import { fontProviders } from "astro/config";
@@ -20,6 +21,8 @@ export function integration(options: AstroChurchOptions): AstroIntegration {
 				addThemeFont(updateConfig);
 
 				addTailwind(config.vite.plugins, updateConfig);
+
+				addSitemap(config.integrations, updateConfig);
 
 				injectRoutes(injectRoute);
 			},
@@ -70,6 +73,21 @@ function addTailwind(
 			vite: {
 				plugins: [tailwindcss()],
 			},
+		});
+	}
+}
+
+function addSitemap(
+	integrations: AstroConfig["integrations"],
+	updateConfig: UpdateConfig,
+) {
+	const siteHasSitemap = integrations.some(
+		(i) => i.name === "@astrojs/sitemap",
+	);
+
+	if (!siteHasSitemap) {
+		updateConfig({
+			integrations: [sitemap()],
 		});
 	}
 }

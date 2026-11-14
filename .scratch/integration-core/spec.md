@@ -80,7 +80,7 @@ Feature env checks move from a pre-config script into the Features themselves, t
 - **The Theme doesn't use or add `astro-icon`.** A Site that uses `astro-icon` for its own icons keeps adding it itself.
 - **Social icons:** a Theme component renders a `simple-icons` icon by name from `@iconify-json/simple-icons`, imported from the Theme's own dependencies and turned into an `<svg>` at build time with `@iconify/utils`. The names are the ones `astro-icon` accepted (`simple-icons:<name>`), so existing `socials[].icon` content keeps working. The markup matches what `astro-icon` rendered closely enough that `sojourners.church`'s styles still apply.
 - **Unknown name:** the component throws an error naming the icon and pointing at https://simpleicons.org/. A prerendered page fails the build (parity: `astro-icon` throws too).
-- **Bundling:** importing `icons.json` (4.6 MB) puts the set in the server build; reading it from disk at build time doesn't. Either ships no client JS. The ticket picks one and records it.
+- **Bundling:** importing `icons.json` (4.6 MB) puts the set in the server build; reading it from disk at build time doesn't. Either ships no client JS. *Ticket 04 imports it (from the package's typed main entry); see its Comments.*
 - **Lucide icons** keep coming from `@lucide/astro`, an ordinary import. They move with their components in 3.4; `@iconify-json/lucide` isn't needed.
 - **Public contract:** the accepted icon names are content a Site writes (PRD §9). A bump of `@iconify-json/simple-icons` that removes a name is breaking.
 - The skeleton route renders one social icon so the harness keeps checking it until 3.4 moves the check to the footer.

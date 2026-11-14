@@ -8,8 +8,9 @@
 // Site-content Tailwind classes and the route's client script (ticket 03),
 // its CSS sets the Theme's font and the font files it preloads are built
 // (ticket 02, spec 3.2), its CSS has Tailwind's preflight exactly once
-// (ticket 03, spec 3.2), and every shipped module imports. Ticket numbers
-// without a spec are spec 3.1's.
+// (ticket 03, spec 3.2), it renders a social icon from the Theme's own icon
+// set and the sitemap is built and lists it (ticket 04, spec 3.2), and every
+// shipped module imports. Ticket numbers without a spec are spec 3.1's.
 //
 // Run from anywhere: node packages/astro-church/tests/packed/harness.mjs
 // Exits 0 when every check passes, 1 on the first failure. On failure the
@@ -51,6 +52,10 @@ const SCRIPT_MARKER = "astro-church:skeleton-script";
 // registers it under, and its family name.
 const FONT_VARIABLE = "--font-sans";
 const FONT_FAMILY = "Poppins";
+
+// The social icon the skeleton component renders (ticket 04, spec 3.2), from
+// the Theme's own @iconify-json/simple-icons, never the Site's.
+const SOCIAL_ICON = "youtube";
 
 // The CMS field's browser bundle (ticket 07), built from
 // `client/scriptureField.ts`. The path is relative to the package root.
@@ -364,6 +369,88 @@ if (missingFonts.length > 0) {
 }
 console.log(
 	`PASS: the ${fontUrls.length} font files the ${ROUTE} page preloads are built`,
+);
+
+// Smoke check (ticket 04, spec 3.2): the social icon renders as an inline
+// <svg> with Iconify's default attributes (1em square, 24-unit viewBox),
+// and a drawn <path>. The Site has no @iconify-json set of its own, so the
+// icon data can only have come from the Theme's dependencies.
+const iconSvg = pageHtml.match(
+	new RegExp(
+		`(<svg\\b[^>]*\\bdata-icon="simple-icons:${SOCIAL_ICON}"[^>]*>)([\\s\\S]*?)</svg>`,
+	),
+);
+if (!iconSvg) {
+	fail(
+		`the ${ROUTE} page has no <svg data-icon="simple-icons:${SOCIAL_ICON}">`,
+	);
+}
+const [, iconTag, iconBody] = iconSvg;
+const missingIconAttributes = [
+	'width="1em"',
+	'height="1em"',
+	'viewBox="0 0 24 24"',
+].filter((attribute) => !iconTag.includes(attribute));
+if (missingIconAttributes.length > 0) {
+	fail(
+		`the ${ROUTE} page's ${SOCIAL_ICON} icon is missing ${missingIconAttributes.join(", ")}: ${iconTag}`,
+	);
+}
+if (!/<path\b/.test(iconBody)) {
+	fail(`the ${ROUTE} page's ${SOCIAL_ICON} icon has no <path>`);
+}
+console.log(
+	`PASS: the ${ROUTE} page renders the ${SOCIAL_ICON} social icon as an inline <svg>`,
+);
+
+// Smoke check (ticket 04, spec 3.2): the Theme's sitemap is built. The index
+// must be a real <sitemapindex> whose sitemaps sit under the Site's own `site`
+// URL and are built, and one of them must list the route: an empty or
+// misaddressed index would pass a bare "the file exists" check.
+const siteUrl = readFileSync(join(site, "astro.config.mjs"), "utf8").match(
+	/\bsite:\s*["']([^"']+)["']/,
+)?.[1];
+if (!siteUrl) {
+	fail("can't read `site` from the packed Site's astro.config.mjs");
+}
+const sitemapIndex = join(client, "sitemap-index.xml");
+if (!existsSync(sitemapIndex)) {
+	fail(
+		`the packed Site's build has no sitemap-index.xml (expected ${sitemapIndex})`,
+	);
+}
+const sitemapIndexXml = readFileSync(sitemapIndex, "utf8");
+if (!/<sitemapindex\b/.test(sitemapIndexXml)) {
+	fail("sitemap-index.xml isn't a <sitemapindex>");
+}
+const sitemapUrls = [...sitemapIndexXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+	([, loc]) => loc,
+);
+if (sitemapUrls.length === 0) {
+	fail("sitemap-index.xml lists no sitemaps");
+}
+const siteOrigin = new URL(siteUrl).origin;
+const sitemapXml = sitemapUrls
+	.map((loc) => {
+		const url = new URL(loc);
+		if (url.origin !== siteOrigin) {
+			fail(
+				`sitemap-index.xml lists ${loc}, which isn't under the Site's ${siteUrl}`,
+			);
+		}
+		const file = join(client, url.pathname);
+		if (!existsSync(file)) {
+			fail(`sitemap-index.xml lists ${loc}, which isn't built`);
+		}
+		return readFileSync(file, "utf8");
+	})
+	.join("\n");
+const routeUrl = new URL(ROUTE, siteUrl).href;
+if (!new RegExp(`<loc>${routeUrl}/?</loc>`).test(sitemapXml)) {
+	fail(`the Site's sitemaps don't list ${routeUrl}`);
+}
+console.log(
+	`PASS: sitemap-index.xml is built and its sitemaps list ${routeUrl}`,
 );
 
 cpSync(join(testsDir, "import-modules.mjs"), join(site, "import-modules.mjs"));

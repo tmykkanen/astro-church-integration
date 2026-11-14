@@ -1,11 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { runSetup, setupParams } from "./setup.ts";
+import { runSetup, setupParams, validOptions, validSite } from "./setup.ts";
 
 describe("integration options", () => {
-	const validOptions = { cms: { repo: "example/grace-church" } };
-	const validSite = "https://example.church";
-
 	it("accepts valid options with no error", async () => {
 		const params = setupParams({ site: validSite });
 

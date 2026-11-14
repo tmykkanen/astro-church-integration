@@ -1,23 +1,16 @@
 import tailwindcss from "@tailwindcss/vite";
-import type { HookParameters } from "astro";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
-import { runSetup, setupParams } from "./setup.ts";
-
-const validOptions = { cms: { repo: "example/grace-church" } };
-const validSite = "https://example.church";
+import {
+	addedPluginNames,
+	runSetup,
+	setupParams,
+	validOptions,
+	validSite,
+} from "./setup.ts";
 
 // Every plugin `@tailwindcss/vite` returns has a name with this prefix.
 const tailwindPluginName = expect.stringMatching(/^@tailwindcss\/vite/);
-
-// Names of every Vite plugin the hook passed to `updateConfig`, across all
-// calls. Vite accepts nested plugin arrays, and `@tailwindcss/vite` returns one.
-const addedPluginNames = (params: HookParameters<"astro:config:setup">) =>
-	vi
-		.mocked(params.updateConfig)
-		.mock.calls.flatMap(([update]) => update.vite?.plugins ?? [])
-		.flat(Number.POSITIVE_INFINITY)
-		.map((plugin) => (plugin as { name?: unknown } | null)?.name);
 
 describe("Tailwind", () => {
 	it("the integration adds the Tailwind Vite plugin when the Site has none", async () => {

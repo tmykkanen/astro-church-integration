@@ -1,0 +1,19 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+import { socialIcon } from "#/lib/socialIcon.ts";
+
+interface Props extends HTMLAttributes<"svg"> {
+	name: string;
+}
+
+const { name, ...props } = Astro.props;
+const { attributes, body } = socialIcon(name);
+---
+
+<svg
+	{...attributes}
+	{...props}
+	data-icon={`simple-icons:${name}`}
+	set:html={body}
+/>

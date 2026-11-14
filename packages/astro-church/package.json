@@ -38,6 +38,9 @@
 		"typecheck": "tsc --noEmit && tsc -p client && astro check --root tests/astro-check"
 	},
 	"dependencies": {
+		"@astrojs/sitemap": "^3.7.5",
+		"@iconify-json/simple-icons": "^1.2.102",
+		"@iconify/utils": "^3.1.7",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/bible-reference-formatter": "^1.0.3",
 		"bible-passage-reference-parser": "^4.0.0",

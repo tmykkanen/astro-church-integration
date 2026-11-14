@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { runSetup, setupParams } from "./setup.ts";
-
-const validOptions = { cms: { repo: "example/grace-church" } };
-const validSite = "https://example.church";
+import { runSetup, setupParams, validOptions, validSite } from "./setup.ts";
 
 describe("Theme font", () => {
 	it("the integration adds the Theme's font (Poppins, Google, --font-sans, latin)", async () => {
